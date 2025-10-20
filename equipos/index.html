@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Equipos - HackerX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --azul-claro: #5dade2;
+      --azul-oscuro: #2874a6;
+      --cyan: #00ffff;
+      --verde-oscuro: #229954;
+      --verde-claro: #58d68d;
+      --morado: #9b59b6;
+      --negro: #0d0d0d;
+      --gris-oscuro: #1a1a1a;
+      --rojo: #e74c3c;
+      --naranja: #f39c12;
+    }
+
+    body {
+      background-color: var(--negro);
+      color: #e0e0e0;
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navbar superior */
+    .navbar {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20, 20, 20, 0.9);
+      display: flex;
+      gap: 14px;
+      padding: 10px 18px;
+      border-radius: 30px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.2);
+      border: 1px solid rgba(0,255,255,0.2);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      z-index: 1000;
+    }
+
+    /* Logo de la web */
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: cyan;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .logo:hover {
+      background-color: rgba(0,255,255,0.15);
+    }
+
+    /* Íconos */
+    .nav-item {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: cyan;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background-color: rgba(0,255,255,0.15);
+      transform: translateY(-3px);
+    }
+
+    .nav-item.active {
+      background-color: rgba(0,255,255,0.2);
+    }
+
+    /* Tooltip (texto flotante) */
+    .nav-item::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: #00ffff;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .nav-item:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(5px);
+    }
+
+    /* Perfil de usuario */
+    .user-profile {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .user-profile:hover {
+      background-color: rgba(0,255,255,0.15);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid rgba(0,255,255,0.5);
+    }
+
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Menú desplegable */
+    .dropdown-menu {
+      position: absolute;
+      top: 55px;
+      right: 0;
+      background: rgba(20, 20, 20, 0.95);
+      border-radius: 12px;
+      padding: 8px 0;
+      min-width: 200px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,255,255,0.2);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .dropdown-menu.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      color: #e0e0e0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .menu-item:hover {
+      background-color: rgba(0,255,255,0.1);
+      color: cyan;
+    }
+
+    .menu-item i {
+      width: 18px;
+      height: 18px;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background: rgba(0,255,255,0.2);
+      margin: 8px 0;
+    }
+
+    /* Contenido principal */
+    .container {
+      max-width: 1200px;
+      margin: 100px auto 40px;
+      padding: 0 20px;
+    }
+
+    /* Lista de equipos */
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .team-card {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .team-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      border-color: var(--cyan);
+    }
+
+    .team-banner {
+      height: 120px;
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      position: relative;
+    }
+
+    .team-avatar {
+      position: absolute;
+      bottom: -30px;
+      left: 20px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 4px solid var(--negro);
+      overflow: hidden;
+      background: var(--gris-oscuro);
+    }
+
+    .team-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .team-info {
+      padding: 40px 20px 20px;
+    }
+
+    .team-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .team-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: #aaaaaa;
+    }
+
+    .team-stats {
+      display: flex;
+      gap: 15px;
+    }
+
+    .team-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--cyan);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+
+    /* Vista de equipo individual */
+    .team-detail {
+      display: none;
+    }
+
+    .team-detail.active {
+      display: block;
+    }
+
+    .team-header {
+      position: relative;
+      margin-bottom: 80px;
+    }
+
+    .team-header-banner {
+      height: 200px;
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .team-header-avatar {
+      position: absolute;
+      bottom: -40px;
+      left: 30px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 6px solid var(--negro);
+      overflow: hidden;
+      background: var(--gris-oscuro);
+    }
+
+    .team-header-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .team-header-info {
+      position: absolute;
+      bottom: -40px;
+      left: 170px;
+      color: white;
+    }
+
+    .team-header-name {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .team-header-meta {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .team-actions {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .team-action-btn {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .team-action-btn:hover {
+      background: rgba(0, 0, 0, 0.8);
+      border-color: var(--cyan);
+    }
+
+    /* Pestañas del equipo */
+    .team-tabs {
+      display: flex;
+      gap: 0;
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 10px;
+      padding: 5px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+    }
+
+    .team-tab {
+      flex: 1;
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: #aaaaaa;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .team-tab.active {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+    }
+
+    /* Contenido de pestañas */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Leaderboard */
+    .leaderboard {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+    }
+
+    .leaderboard-title {
+      font-size: 22px;
+      color: var(--cyan);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .leaderboard-item:hover {
+      background: rgba(91, 173, 226, 0.1);
+    }
+
+    .leaderboard-rank {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--cyan);
+      width: 30px;
+      text-align: center;
+    }
+
+    .leaderboard-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .leaderboard-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .leaderboard-user {
+      flex: 1;
+    }
+
+    .leaderboard-username {
+      font-weight: bold;
+      color: var(--cyan);
+      margin-bottom: 3px;
+    }
+
+    .leaderboard-role {
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+
+    .leaderboard-points {
+      font-weight: bold;
+      color: var(--naranja);
+    }
+
+    /* Invitaciones */
+    .invitations-section {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+    }
+
+    .section-title {
+      font-size: 22px;
+      color: var(--cyan);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .invitation-form {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .invitation-input {
+      flex: 1;
+      padding: 12px 15px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      border-radius: 10px;
+      color: #e0e0e0;
+      font-size: 14px;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--verde-claro), var(--verde-oscuro));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(34, 153, 84, 0.4);
+    }
+
+    .pending-invitations {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .invitation-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+    }
+
+    .invitation-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .invitation-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .invitation-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .invitation-username {
+      font-weight: bold;
+      color: var(--cyan);
+    }
+
+    .invitation-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-sm {
+      padding: 8px 15px;
+      font-size: 14px;
+    }
+
+    .btn-success {
+      background: var(--verde-oscuro);
+      color: white;
+    }
+
+    .btn-danger {
+      background: var(--rojo);
+      color: white;
+    }
+
+    /* Comentarios del equipo */
+    .comments-section {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+    }
+
+    .comments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .comment {
+      display: flex;
+      gap: 12px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+    }
+
+    .comment-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .comment-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .comment-content {
+      flex: 1;
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .comment-username {
+      font-weight: bold;
+      color: var(--cyan);
+    }
+
+    .comment-time {
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+
+    .comment-text {
+      line-height: 1.4;
+    }
+
+    .add-comment {
+      display: flex;
+      gap: 12px;
+    }
+
+    .comment-input {
+      flex: 1;
+      padding: 12px 15px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      border-radius: 20px;
+      color: #e0e0e0;
+      font-size: 14px;
+      resize: none;
+      min-height: 50px;
+      font-family: "Inter", sans-serif;
+    }
+
+    .send-comment {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .send-comment:hover {
+      transform: scale(1.1);
+    }
+
+    /* Configuración del equipo */
+    .settings-section {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .setting-item {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .setting-title {
+      font-size: 16px;
+      color: var(--cyan);
+      margin-bottom: 15px;
+    }
+
+    .upload-area {
+      border: 2px dashed rgba(91, 173, 226, 0.5);
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .upload-area:hover {
+      border-color: var(--cyan);
+      background: rgba(91, 173, 226, 0.1);
+    }
+
+    .upload-icon {
+      font-size: 40px;
+      color: var(--azul-claro);
+      margin-bottom: 10px;
+    }
+
+    .upload-text {
+      color: #aaaaaa;
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .teams-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+      
+      .team-header-info {
+        left: 150px;
+      }
+      
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        gap: 10px;
+        padding: 8px 14px;
+      }
+      
+      .nav-item {
+        width: 36px;
+        height: 36px;
+      }
+      
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .container {
+        margin-top: 80px;
+      }
+      
+      .team-header-avatar {
+        width: 80px;
+        height: 80px;
+        bottom: -25px;
+      }
+      
+      .team-header-info {
+        left: 120px;
+        bottom: -25px;
+      }
+      
+      .team-header-name {
+        font-size: 22px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .teams-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .team-tabs {
+        flex-direction: column;
+      }
+      
+      .invitation-form {
+        flex-direction: column;
+      }
+      
+      .team-actions {
+        position: static;
+        margin-top: 15px;
+        justify-content: center;
+      }
+      
+      .team-header-info {
+        position: static;
+        margin-top: 50px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar superior -->
+  <nav class="navbar">
+    <!-- Logo de la web -->
+    <div class="logo">
+      <i data-lucide="globe"></i>
+    </div>
+    
+    <!-- Elementos de navegación -->
+    <div class="nav-item" data-label="Home"><i data-lucide="home"></i></div>
+    <div class="nav-item" data-label="Privado"><i data-lucide="message-square"></i></div>
+    <div class="nav-item active" data-label="Equipos"><i data-lucide="users"></i></div>
+    
+    <!-- Perfil de usuario -->
+    <div class="user-profile">
+      <div class="user-avatar" id="userAvatar">
+        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Foto de perfil">
+      </div>
+      
+      <!-- Menú desplegable -->
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="menu-item">
+          <i data-lucide="user"></i>
+          <span>Perfil</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="bell"></i>
+          <span>Notificaciones</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="eye"></i>
+          <span>Vista previa</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="award"></i>
+          <span>Logros</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="download"></i>
+          <span>Descargar VPN</span>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-item">
+          <i data-lucide="log-out"></i>
+          <span>Cerrar sesión</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container">
+    <!-- Lista de equipos -->
+    <div class="teams-list" id="teamsList">
+      <h1 style="text-align: center; margin-bottom: 30px; color: var(--cyan);">Equipos de Hacking</h1>
+      
+      <div class="teams-grid">
+        <!-- Equipo 1 -->
+        <div class="team-card" data-team="cyberwarriors">
+          <div class="team-banner"></div>
+          <div class="team-avatar">
+            <img src="https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Cyber Warriors">
+          </div>
+          <div class="team-info">
+            <div class="team-name">Cyber Warriors</div>
+            <div class="team-meta">
+              <span>Líder: @HackerX</span>
+              <span>Creado: 2022</span>
+            </div>
+            <div class="team-stats">
+              <div class="team-stat">
+                <div class="stat-value">15,840</div>
+                <div class="stat-label">Puntos</div>
+              </div>
+              <div class="team-stat">
+                <div class="stat-value">24</div>
+                <div class="stat-label">Miembros</div>
+              </div>
+              <div class="team-stat">
+                <div class="stat-value">156</div>
+                <div class="stat-label">Retos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Equipo 2 -->
+        <div class="team-card" data-team="zeroday">
+          <div class="team-banner" style="background: linear-gradient(135deg, var(--verde-claro), var(--verde-oscuro));"></div>
+          <div class="team-avatar">
+            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Zero Day">
+          </div>
+          <div class="team-info">
+            <div class="team-name">Zero Day</div>
+            <div class="team-meta">
+              <span>Líder: @CodeMaster</span>
+              <span>Creado: 2021</span>
+            </div>
+            <div class="team-stats">
+              <div class="team-stat">
+                <div class="stat-value">12,560</div>
+                <div class="stat-label">Puntos</div>
+              </div>
+              <div class="team-stat">
+                <div class="stat-value">18</div>
+                <div class="stat-label">Miembros</div>
+              </div>
+              <div class="team-stat">
+                <div class="stat-value">134</div>
+                <div class="stat-label">Retos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Equipo 3 -->
+        <div class="team-card" data-team="cryptohackers">
+          <div class="team-banner" style="background: linear-gradient(135deg, var(--naranja), #e67e22);"></div>
+          <div class="team-avatar">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Crypto Hackers">
+          </div>
+          <div class="team-info">
+            <div class="team-name">Crypto Hackers</div>
+            <div class="team-meta">
+              <span>Líder: @CryptoQueen</span>
+              <span>Creado: 2023</span>
+            </div>
+            <div class="team-stats">
+              <div class="team-stat">
+                <div class="stat-value">9,870</div>
+                <div class="stat-label">Puntos</div>
+              </div>
+              <div class="team-stat">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Miembros</div>
+              </div>
+              <div class="team-stat">
+                <div class="stat-value">89</div>
+                <div class="stat-label">Retos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista de equipo individual -->
+    <div class="team-detail" id="teamDetail">
+      <!-- Header del equipo -->
+      <div class="team-header">
+        <div class="team-header-banner" id="teamBanner"></div>
+        <div class="team-header-avatar">
+          <img src="" alt="" id="teamDetailAvatar">
+        </div>
+        <div class="team-header-info">
+          <div class="team-header-name" id="teamDetailName"></div>
+          <div class="team-header-meta" id="teamDetailMeta"></div>
+        </div>
+        <div class="team-actions">
+          <button class="team-action-btn" id="backToTeams">
+            <i class="fas fa-arrow-left"></i> Volver
+          </button>
+          <button class="team-action-btn">
+            <i class="fas fa-cog"></i> Configurar
+          </button>
+        </div>
+      </div>
+
+      <!-- Pestañas del equipo -->
+      <div class="team-tabs">
+        <button class="team-tab active" data-tab="leaderboard">Leaderboard</button>
+        <button class="team-tab" data-tab="invitations">Invitaciones</button>
+        <button class="team-tab" data-tab="comments">Comentarios</button>
+        <button class="team-tab" data-tab="settings">Configuración</button>
+      </div>
+
+      <!-- Contenido de las pestañas -->
+      <div class="tab-content active" id="leaderboardTab">
+        <div class="leaderboard">
+          <div class="leaderboard-title">Ranking del Equipo</div>
+          <div class="leaderboard-list" id="leaderboardList">
+            <!-- Los elementos del leaderboard se cargarán aquí -->
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="invitationsTab">
+        <div class="invitations-section">
+          <div class="section-title">Gestión de Invitaciones</div>
+          
+          <div class="invitation-form">
+            <input type="text" class="invitation-input" placeholder="Nombre de usuario a invitar">
+            <button class="btn btn-primary">
+              <i class="fas fa-paper-plane"></i> Enviar Invitación
+            </button>
+          </div>
+          
+          <div class="pending-invitations">
+            <div class="invitation-item">
+              <div class="invitation-user">
+                <div class="invitation-avatar">
+                  <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Usuario">
+                </div>
+                <div class="invitation-username">@BinaryExplorer</div>
+              </div>
+              <div class="invitation-actions">
+                <button class="btn btn-success btn-sm">Aceptar</button>
+                <button class="btn btn-danger btn-sm">Rechazar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="commentsTab">
+        <div class="comments-section">
+          <div class="section-title">Comentarios del Equipo</div>
+          
+          <div class="comments-list" id="commentsList">
+            <!-- Los comentarios se cargarán aquí -->
+          </div>
+          
+          <div class="add-comment">
+            <textarea class="comment-input" placeholder="Escribe un comentario..."></textarea>
+            <button class="send-comment">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="settingsTab">
+        <div class="settings-section">
+          <div class="section-title">Configuración del Equipo</div>
+          
+          <div class="settings-grid">
+            <div class="setting-item">
+              <div class="setting-title">Banner del Equipo</div>
+              <div class="upload-area">
+                <div class="upload-icon">
+                  <i class="fas fa-image"></i>
+                </div>
+                <div class="upload-text">Haz clic para subir nuevo banner</div>
+              </div>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-title">Foto de Perfil</div>
+              <div class="upload-area">
+                <div class="upload-icon">
+                  <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="upload-text">Haz clic para cambiar la foto</div>
+              </div>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-title">Notificaciones</div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                  <input type="checkbox" checked> Nuevos miembros
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px;">
+                  <input type="checkbox" checked> Logros del equipo
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px;">
+                  <input type="checkbox"> Comentarios nuevos
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    
+    // Control del menú desplegable
+    document.getElementById('userAvatar').addEventListener('click', function(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('dropdownMenu');
+      menu.classList.toggle('active');
+    });
+    
+    // Cerrar menú al hacer clic fuera
+    document.addEventListener('click', function() {
+      document.getElementById('dropdownMenu').classList.remove('active');
+    });
+
+    // Datos de ejemplo para los equipos
+    const teamsData = {
+      'cyberwarriors': {
+        name: 'Cyber Warriors',
+        avatar: 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+        banner: 'linear-gradient(135deg, var(--azul-claro), var(--morado))',
+        leader: '@HackerX',
+        created: 'Enero 2022',
+        points: '15,840',
+        members: '24',
+        leaderboard: [
+          { rank: 1, username: '@HackerX', role: 'Líder', points: '4,250', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+          { rank: 2, username: '@CyberNinja', role: 'Miembro', points: '3,890', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+          { rank: 3, username: '@CodeBreaker', role: 'Miembro', points: '2,450', avatar: 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+          { rank: 4, username: '@BinaryHunter', role: 'Miembro', points: '1,980', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+          { rank: 5, username: '@SecMaster', role: 'Miembro', points: '1,560', avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }
+        ],
+        comments: [
+          { username: '@CyberNinja', time: 'Hace 2 horas', text: '¡Gran trabajo en el último CTF equipo!', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+          { username: '@HackerX', time: 'Hace 1 hora', text: 'Recordatorio: Reunión mañana a las 3pm para planificar la próxima competencia.', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+          { username: '@CodeBreaker', time: 'Hace 30 min', text: '¿Alguien quiere practicar SQL injection? Tengo un lab nuevo.', avatar: 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }
+        ]
+      },
+      'zeroday': {
+        name: 'Zero Day',
+        avatar: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+        banner: 'linear-gradient(135deg, var(--verde-claro), var(--verde-oscuro))',
+        leader: '@CodeMaster',
+        created: 'Marzo 2021',
+        points: '12,560',
+        members: '18'
+      },
+      'cryptohackers': {
+        name: 'Crypto Hackers',
+        avatar: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+        banner: 'linear-gradient(135deg, var(--naranja), #e67e22)',
+        leader: '@CryptoQueen',
+        created: 'Junio 2023',
+        points: '9,870',
+        members: '12'
+      }
+    };
+
+    // Abrir vista de equipo
+    document.querySelectorAll('.team-card').forEach(card => {
+      card.addEventListener('click', function() {
+        const teamId = this.getAttribute('data-team');
+        openTeam(teamId);
+      });
+    });
+
+    // Volver a la lista de equipos
+    document.getElementById('backToTeams').addEventListener('click', function() {
+      document.getElementById('teamsList').style.display = 'block';
+      document.getElementById('teamDetail').classList.remove('active');
+    });
+
+    // Función para abrir equipo
+    function openTeam(teamId) {
+      const team = teamsData[teamId];
+      if (!team) return;
+      
+      // Ocultar lista y mostrar detalle
+      document.getElementById('teamsList').style.display = 'none';
+      document.getElementById('teamDetail').classList.add('active');
+      
+      // Actualizar información del equipo
+      document.getElementById('teamDetailName').textContent = team.name;
+      document.getElementById('teamDetailAvatar').src = team.avatar;
+      document.getElementById('teamDetailMeta').textContent = `Líder: ${team.leader} • Creado: ${team.created} • ${team.points} puntos`;
+      document.getElementById('teamBanner').style.background = team.banner;
+      
+      // Cargar leaderboard si existe
+      if (team.leaderboard) {
+        const leaderboardList = document.getElementById('leaderboardList');
+        leaderboardList.innerHTML = '';
+        
+        team.leaderboard.forEach(member => {
+          const item = document.createElement('div');
+          item.className = 'leaderboard-item';
+          item.innerHTML = `
+            <div class="leaderboard-rank">${member.rank}</div>
+            <div class="leaderboard-avatar">
+              <img src="${member.avatar}" alt="${member.username}">
+            </div>
+            <div class="leaderboard-user">
+              <div class="leaderboard-username">${member.username}</div>
+              <div class="leaderboard-role">${member.role}</div>
+            </div>
+            <div class="leaderboard-points">${member.points}</div>
+          `;
+          leaderboardList.appendChild(item);
+        });
+      }
+      
+      // Cargar comentarios si existen
+      if (team.comments) {
+        const commentsList = document.getElementById('commentsList');
+        commentsList.innerHTML = '';
+        
+        team.comments.forEach(comment => {
+          const commentElement = document.createElement('div');
+          commentElement.className = 'comment';
+          commentElement.innerHTML = `
+            <div class="comment-avatar">
+              <img src="${comment.avatar}" alt="${comment.username}">
+            </div>
+            <div class="comment-content">
+              <div class="comment-header">
+                <div class="comment-username">${comment.username}</div>
+                <div class="comment-time">${comment.time}</div>
+              </div>
+              <div class="comment-text">${comment.text}</div>
+            </div>
+          `;
+          commentsList.appendChild(commentElement);
+        });
+      }
+    }
+
+    // Cambiar entre pestañas
+    document.querySelectorAll('.team-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        
+        // Remover activo de todas las pestañas
+        document.querySelectorAll('.team-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Activar pestaña seleccionada
+        this.classList.add('active');
+        document.getElementById(`${tabId}Tab`).classList.add('active');
+      });
+    });
+
+    // Enviar comentario
+    document.querySelector('.send-comment').addEventListener('click', function() {
+      const input = this.previousElementSibling;
+      const text = input.value.trim();
+      
+      if (text) {
+        const commentsList = document.getElementById('commentsList');
+        const now = new Date();
+        const time = `Hace unos momentos`;
+        
+        const commentElement = document.createElement('div');
+        commentElement.className = 'comment';
+        commentElement.innerHTML = `
+          <div class="comment-avatar">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="@HackerX">
+          </div>
+          <div class="comment-content">
+            <div class="comment-header">
+              <div class="comment-username">@HackerX</div>
+              <div class="comment-time">${time}</div>
+            </div>
+            <div class="comment-text">${text}</div>
+          </div>
+        `;
+        
+        commentsList.appendChild(commentElement);
+        input.value = '';
+        
+        // Scroll al final
+        commentsList.scrollTop = commentsList.scrollHeight;
+      }
+    });
+
+    // Simular subida de archivos
+    document.querySelectorAll('.upload-area').forEach(area => {
+      area.addEventListener('click', function() {
+        alert('Funcionalidad de subida de archivos simulada. En una implementación real, esto abriría un selector de archivos.');
+      });
+    });
+
+    // Enviar invitación
+    document.querySelector('.btn-primary').addEventListener('click', function() {
+      const input = this.previousElementSibling;
+      const username = input.value.trim();
+      
+      if (username) {
+        alert(`Invitación enviada a ${username}`);
+        input.value = '';
+      }
+    });
+  </script>
+</body>
+</html>

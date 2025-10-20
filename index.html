@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberNexus - Inicio</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0d0d0d;
+      color: #e0e0e0;
+      font-family: "Inter", sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Navbar superior */
+    .top-navbar {
+      background: rgba(10, 10, 10, 0.95);
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(0,255,255,0.2);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      position: relative;
+      z-index: 1000;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: cyan;
+      font-size: 24px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .logo i {
+      font-size: 28px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: #e0e0e0;
+      text-decoration: none;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      padding: 8px 15px;
+      border-radius: 5px;
+    }
+
+    .nav-link:hover {
+      color: cyan;
+      background: rgba(0,255,255,0.1);
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-login {
+      background: transparent;
+      color: cyan;
+      border: 1px solid cyan;
+    }
+
+    .btn-login:hover {
+      background: rgba(0,255,255,0.1);
+      box-shadow: 0 0 10px rgba(0,255,255,0.3);
+    }
+
+    .btn-signup {
+      background: cyan;
+      color: #0d0d0d;
+      border: 1px solid cyan;
+    }
+
+    .btn-signup:hover {
+      background: #00cccc;
+      box-shadow: 0 0 15px rgba(0,255,255,0.5);
+    }
+
+    /* Contenido principal */
+    .main-content {
+      min-height: calc(100vh - 70px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .video-container {
+      width: 85%;
+      max-width: 1200px;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0,255,255,0.2);
+      position: relative;
+      border: 1px solid rgba(0,255,255,0.3);
+    }
+
+    .video-container video {
+      width: 100%;
+      display: block;
+    }
+
+    .video-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(13,13,13,0.3), rgba(13,13,13,0.7));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .video-title {
+      font-size: 3.5rem;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(0,255,255,0.5);
+    }
+
+    .video-subtitle {
+      font-size: 1.5rem;
+      color: cyan;
+      margin-bottom: 30px;
+      max-width: 600px;
+    }
+
+    .cta-button {
+      padding: 15px 40px;
+      background: rgba(0,255,255,0.2);
+      color: cyan;
+      border: 2px solid cyan;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .cta-button:hover {
+      background: cyan;
+      color: #0d0d0d;
+      box-shadow: 0 0 20px rgba(0,255,255,0.7);
+      transform: translateY(-5px);
+    }
+
+    /* Footer */
+    .footer {
+      background: rgba(10, 10, 10, 0.95);
+      padding: 30px 40px;
+      border-top: 1px solid rgba(0,255,255,0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .footer-link {
+      color: #aaa;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .footer-link:hover {
+      color: cyan;
+    }
+
+    .copyright {
+      color: #666;
+      font-size: 14px;
+    }
+
+    /* Efectos de partículas de fondo */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      background: rgba(0,255,255,0.3);
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .video-title {
+        font-size: 2.8rem;
+      }
+      
+      .video-subtitle {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-navbar {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .nav-links {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .video-title {
+        font-size: 2.2rem;
+      }
+      
+      .video-subtitle {
+        font-size: 1.1rem;
+      }
+      
+      .video-overlay {
+        padding: 20px;
+      }
+      
+      .footer {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .video-title {
+        font-size: 1.8rem;
+      }
+      
+      .video-subtitle {
+        font-size: 1rem;
+      }
+      
+      .nav-links {
+        gap: 10px;
+      }
+      
+      .nav-link {
+        font-size: 14px;
+        padding: 6px 10px;
+      }
+      
+      .btn {
+        padding: 8px 15px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar superior -->
+  <nav class="top-navbar">
+    <a href="#" class="logo">
+      <i class="fas fa-globe"></i>
+      <span>CyberNexus</span>
+    </a>
+    
+    <div class="nav-links">
+      <a href="#" class="nav-link">Inicio</a>
+      <a href="#" class="nav-link">Wikix</a>
+      <a href="#" class="nav-link">Privacidad</a>
+      <a href="#" class="nav-link">Términos y Condiciones</a>
+    </div>
+    
+    <div class="auth-buttons">
+      <a href="#" class="btn btn-login">Iniciar Sesión</a>
+      <a href="#" class="btn btn-signup">Crear Cuenta</a>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Efectos de partículas -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Video de presentación -->
+    <div class="video-container">
+      <video autoplay muted loop>
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-digital-wireframe-flow-129-large.mp4" type="video/mp4">
+        Tu navegador no soporta el elemento video.
+      </video>
+      
+      <div class="video-overlay">
+        <h1 class="video-title">Bienvenido a CyberNexus</h1>
+        <p class="video-subtitle">Descubre un mundo de posibilidades digitales donde la tecnología y la creatividad se encuentran</p>
+        <a href="#" class="cta-button">Explorar Ahora</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="#" class="footer-link">Privacidad</a>
+      <a href="#" class="footer-link">Términos y Condiciones</a>
+      <a href="#" class="footer-link">Wikix</a>
+      <a href="#" class="footer-link">Soporte</a>
+      <a href="#" class="footer-link">Contacto</a>
+    </div>
+    
+    <div class="copyright">
+      &copy; 2023 CyberNexus. Todos los derechos reservados.
+    </div>
+  </footer>
+
+  <script>
+    // Crear partículas de fondo
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 30;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Tamaño aleatorio
+        const size = Math.random() * 10 + 5;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Posición inicial aleatoria
+        particle.style.left = `${Math.random() * 100}%`;
+        
+        // Duración de animación aleatoria
+        const duration = Math.random() * 20 + 10;
+        particle.style.animationDuration = `${duration}s`;
+        
+        // Retraso aleatorio
+        const delay = Math.random() * 5;
+        particle.style.animationDelay = `${delay}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+    
+    // Inicializar partículas cuando la página cargue
+    document.addEventListener('DOMContentLoaded', createParticles);
+    
+    // Control de video para dispositivos móviles
+    const video = document.querySelector('video');
+    
+    // Pausar video cuando no está visible (para ahorrar recursos)
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.5 });
+    
+    observer.observe(video);
+  </script>
+</body>
+</html>

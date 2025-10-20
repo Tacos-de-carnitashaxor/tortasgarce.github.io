@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personalización - HackerX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --azul-claro: #5dade2;
+      --azul-oscuro: #2874a6;
+      --cyan: #00ffff;
+      --verde-oscuro: #229954;
+      --verde-claro: #58d68d;
+      --morado: #9b59b6;
+      --negro: #0d0d0d;
+      --gris-oscuro: #1a1a1a;
+      --rojo: #e74c3c;
+      --azul: #3498db;
+      --pastel-azul: #a7d2f0;
+      --pastel-verde: #a8e6cf;
+    }
+
+    body {
+      background-color: var(--negro);
+      color: #e0e0e0;
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navbar inferior */
+    .navbar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(26, 26, 26, 0.95);
+      display: flex;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 30px;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      z-index: 1000;
+    }
+
+    /* Íconos */
+    .nav-item {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cyan);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      transform: translateY(-5px);
+      color: white;
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+    }
+
+    /* Tooltip (texto flotante) */
+    .nav-item::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: var(--cyan);
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .nav-item:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-5px);
+    }
+
+    /* Contenido principal */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px 100px;
+    }
+
+    /* Encabezado */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .username {
+      font-size: 36px;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--azul-claro), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: var(--azul-claro);
+    }
+
+    /* Sección de personalización */
+    .customization-section {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 20px;
+      padding: 30px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      margin-bottom: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .customization-title {
+      font-size: 32px;
+      background: linear-gradient(135deg, var(--cyan), var(--azul-claro));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 25px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* Grid de personalización */
+    .customization-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 30px;
+    }
+
+    .customization-category {
+      background: linear-gradient(135deg, rgba(40, 116, 166, 0.2), rgba(155, 89, 182, 0.2));
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.2);
+    }
+
+    .category-title {
+      font-size: 22px;
+      color: var(--cyan);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .category-title i {
+      font-size: 24px;
+    }
+
+    /* Avatar management */
+    .avatar-management {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .avatar-upload {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .upload-btn {
+      background: linear-gradient(135deg, var(--verde-claro), var(--verde-oscuro));
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(34, 153, 84, 0.4);
+    }
+
+    .upload-info {
+      font-size: 14px;
+      color: #aaaaaa;
+    }
+
+    .avatar-gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .avatar-item {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .avatar-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-item.active {
+      box-shadow: 0 0 0 3px var(--cyan);
+    }
+
+    .avatar-item .delete-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(231, 76, 60, 0.8);
+      color: white;
+      border: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .avatar-item:hover .delete-btn {
+      opacity: 1;
+    }
+
+    /* Opciones de personalización */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .option-item {
+      background: rgba(40, 116, 166, 0.1);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .option-item:hover {
+      transform: translateY(-5px);
+      background: rgba(40, 116, 166, 0.2);
+    }
+
+    .option-item.active {
+      border-color: var(--cyan);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    }
+
+    .option-icon {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .option-label {
+      font-size: 14px;
+      color: #e0e0e0;
+    }
+
+    /* Vista previa */
+    .preview-section {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, rgba(40, 116, 166, 0.2), rgba(155, 89, 182, 0.2));
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.2);
+    }
+
+    .preview-title {
+      font-size: 22px;
+      color: var(--cyan);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .preview-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .preview-avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .preview-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-info {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 300px;
+    }
+
+    .preview-username {
+      font-size: 24px;
+      color: var(--cyan);
+      font-weight: bold;
+    }
+
+    .preview-tag {
+      display: inline-block;
+      padding: 8px 15px;
+      background: linear-gradient(135deg, var(--verde-claro), var(--verde-oscuro));
+      border-radius: 20px;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .music-player {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px 20px;
+      border-radius: 10px;
+    }
+
+    .play-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .song-info {
+      font-size: 14px;
+      color: var(--azul-claro);
+    }
+
+    /* Bordes específicos */
+    .border-red {
+      border: 5px solid var(--rojo);
+    }
+
+    .border-blue {
+      border: 5px solid var(--azul);
+    }
+
+    /* Paletas de colores */
+    .palette-default {
+      /* Usa los colores por defecto */
+    }
+
+    .palette-pastel {
+      --azul-claro: var(--pastel-azul);
+      --cyan: var(--pastel-verde);
+    }
+
+    /* Fondos */
+    .bg-default {
+      background: var(--negro);
+    }
+
+    .bg-stripes {
+      background: linear-gradient(45deg, var(--gris-oscuro) 25%, transparent 25%), 
+                  linear-gradient(-45deg, var(--gris-oscuro) 25%, transparent 25%), 
+                  linear-gradient(45deg, transparent 75%, var(--gris-oscuro) 75%), 
+                  linear-gradient(-45deg, transparent 75%, var(--gris-oscuro) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+
+    /* Cursors */
+    .cursor-default {
+      cursor: default;
+    }
+
+    .cursor-skull {
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="white" d="M12 2a9 9 0 0 0-9 9a8.99 8.99 0 0 0 4 7.47V22h2v-2h2v2h2v-2h2v2h2v-3.53a8.99 8.99 0 0 0 4-7.47a9 9 0 0 0-9-9m-4 9a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m8 0a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m-4 3l1.5 3h-3l1.5-3z"/></svg>'), auto;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .customization-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .avatar-gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        bottom: 10px;
+        padding: 10px 15px;
+      }
+      
+      .container {
+        padding: 20px 15px 100px;
+      }
+      
+      .username {
+        font-size: 28px;
+      }
+      
+      .customization-title {
+        font-size: 26px;
+      }
+      
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .preview-container {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Contenido principal -->
+  <div class="container">
+    <!-- Encabezado -->
+    <div class="header">
+      <div class="username">@HackerX</div>
+      <div class="subtitle">Personalización del Perfil</div>
+    </div>
+    
+    <!-- Sección de personalización -->
+    <div class="customization-section">
+      <h2 class="customization-title">Personaliza tu Perfil</h2>
+      
+      <div class="customization-grid">
+        <!-- Gestión de Avatares -->
+        <div class="customization-category">
+          <h3 class="category-title"><i class="fas fa-user-circle"></i> Avatares</h3>
+          <div class="avatar-management">
+            <div class="avatar-upload">
+              <button class="upload-btn">
+                <i class="fas fa-upload"></i> Subir Avatar
+              </button>
+              <div class="upload-info">Máximo 5 avatares</div>
+            </div>
+            
+            <div class="avatar-gallery">
+              <div class="avatar-item active">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Avatar 1">
+                <button class="delete-btn"><i class="fas fa-times"></i></button>
+              </div>
+              <div class="avatar-item">
+                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Avatar 2">
+                <button class="delete-btn"><i class="fas fa-times"></i></button>
+              </div>
+              <div class="avatar-item">
+                <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Avatar 3">
+                <button class="delete-btn"><i class="fas fa-times"></i></button>
+              </div>
+              <div class="avatar-item">
+                <div class="empty-avatar">
+                  <i class="fas fa-plus" style="font-size: 40px; color: #666;"></i>
+                </div>
+              </div>
+              <div class="avatar-item">
+                <div class="empty-avatar">
+                  <i class="fas fa-plus" style="font-size: 40px; color: #666;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Banner y Música -->
+        <div class="customization-category">
+          <h3 class="category-title"><i class="fas fa-image"></i> Banner y Música</h3>
+          <div class="options-grid">
+            <div class="option-item">
+              <div class="option-icon"><i class="fas fa-image"></i></div>
+              <div class="option-label">Subir Banner</div>
+            </div>
+            <div class="option-item">
+              <div class="option-icon"><i class="fas fa-music"></i></div>
+              <div class="option-label">Subir Música</div>
+            </div>
+          </div>
+          <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+            <div style="font-size: 14px; color: #aaa; margin-bottom: 10px;">Canción actual:</div>
+            <div style="color: var(--cyan);">Nick Wagen - Confusion</div>
+          </div>
+        </div>
+
+        <!-- Borde de Avatar -->
+        <div class="customization-category">
+          <h3 class="category-title"><i class="fas fa-border-style"></i> Borde de Avatar</h3>
+          <div class="options-grid">
+            <div class="option-item active">
+              <div class="option-icon"><i class="fas fa-circle" style="color: var(--rojo);"></i></div>
+              <div class="option-label">Rojo</div>
+            </div>
+            <div class="option-item">
+              <div class="option-icon"><i class="fas fa-circle" style="color: var(--azul);"></i></div>
+              <div class="option-label">Azul</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paleta de Colores -->
+        <div class="customization-category">
+          <h3 class="category-title"><i class="fas fa-palette"></i> Paleta de Colores</h3>
+          <div class="options-grid">
+            <div class="option-item active">
+              <div class="option-icon"><i class="fas fa-palette" style="color: var(--cyan);"></i></div>
+              <div class="option-label">Default</div>
+            </div>
+            <div class="option-item">
+              <div class="option-icon"><i class="fas fa-palette" style="color: var(--pastel-azul);"></i></div>
+              <div class="option-label">Pastel</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Etiqueta -->
+        <div class="customization-category">
+          <h3 class="category-title"><i class="fas fa-tag"></i> Etiqueta</h3>
+          <div class="options-grid">
+            <div class="option-item active">
+              <div class="option-icon"><i class="fas fa-crown"></i></div>
+              <div class="option-label">Invicta</div>
+            </div>
+            <div class="option-item">
+              <div class="option-icon"><i class="fas fa-smile"></i></div>
+              <div class="option-label">Never Lose Your Smile</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fondo -->
+        <div class="customization-category">
+          <h3 class="category-title"><i class="fas fa-desktop"></i> Fondo</h3>
+          <div class="options-grid">
+            <div class="option-item active">
+              <div class="option-icon"><i class="fas fa-square-full"></i></div>
+              <div class="option-label">Default</div>
+            </div>
+            <div class="option-item">
+              <div class="option-icon"><i class="fas fa-border-all"></i></div>
+              <div class="option-label">Rayas</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cursor -->
+        <div class="customization-category">
+          <h3 class="category-title"><i class="fas fa-mouse-pointer"></i> Cursor</h3>
+          <div class="options-grid">
+            <div class="option-item active">
+              <div class="option-icon"><i class="fas fa-mouse"></i></div>
+              <div class="option-label">Default</div>
+            </div>
+            <div class="option-item">
+              <div class="option-icon"><i class="fas fa-skull"></i></div>
+              <div class="option-label">Cráneo</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vista Previa -->
+        <div class="preview-section">
+          <h3 class="preview-title">Vista Previa</h3>
+          <div class="preview-container">
+            <div class="preview-avatar border-red">
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Avatar preview">
+            </div>
+            <div class="preview-info">
+              <div class="preview-username">@HackerX</div>
+              <div class="preview-tag">Invicta</div>
+              <div class="music-player">
+                <div class="play-btn">
+                  <i class="fas fa-play"></i>
+                </div>
+                <div class="song-info">Nick Wagen - Confusion</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navbar inferior -->
+  <nav class="navbar">
+    <div class="nav-item" data-label="Casa"><i data-lucide="home"></i></div>
+    <div class="nav-item" data-label="Resumen"><i data-lucide="user"></i></div>
+    <div class="nav-item" data-label="Social"><i data-lucide="users"></i></div>
+    <div class="nav-item" data-label="Competitivo"><i data-lucide="trophy"></i></div>
+    <div class="nav-item" data-label="Galería"><i data-lucide="image"></i></div>
+    <div class="nav-item" data-label="Stories"><i data-lucide="plus-circle"></i></div>
+    <div class="nav-item active" data-label="Personalización"><i data-lucide="palette"></i></div>
+    <div class="nav-item" data-label="Privacidad"><i data-lucide="lock"></i></div>
+    <div class="nav-item" data-label="Configuración"><i data-lucide="settings"></i></div>
+  </nav>
+
+  <script>
+    lucide.createIcons();
+    
+    // Destacar el elemento activo en la navbar
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      item.addEventListener('click', function() {
+        navItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Gestión de avatares
+    const avatarItems = document.querySelectorAll('.avatar-item');
+    avatarItems.forEach(item => {
+      item.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('delete-btn')) {
+          avatarItems.forEach(i => i.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Actualizar vista previa
+          const img = this.querySelector('img');
+          if (img) {
+            document.querySelector('.preview-avatar img').src = img.src;
+          }
+        }
+      });
+    });
+
+    // Botones de eliminar avatar
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    deleteButtons.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const avatarItem = this.parentElement;
+        if (avatarItem.classList.contains('active')) {
+          alert('No puedes eliminar el avatar activo');
+        } else {
+          avatarItem.innerHTML = '<div class="empty-avatar"><i class="fas fa-plus" style="font-size: 40px; color: #666;"></i></div>';
+        }
+      });
+    });
+
+    // Opciones de personalización
+    const optionItems = document.querySelectorAll('.option-item');
+    optionItems.forEach(item => {
+      item.addEventListener('click', function() {
+        const category = this.closest('.customization-category');
+        const options = category.querySelectorAll('.option-item');
+        options.forEach(opt => opt.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Actualizar vista previa según la opción seleccionada
+        const categoryTitle = category.querySelector('.category-title').textContent;
+        const optionLabel = this.querySelector('.option-label').textContent;
+        
+        if (categoryTitle.includes('Borde')) {
+          const previewAvatar = document.querySelector('.preview-avatar');
+          previewAvatar.classList.remove('border-red', 'border-blue');
+          if (optionLabel === 'Rojo') {
+            previewAvatar.classList.add('border-red');
+          } else if (optionLabel === 'Azul') {
+            previewAvatar.classList.add('border-blue');
+          }
+        } else if (categoryTitle.includes('Etiqueta')) {
+          const previewTag = document.querySelector('.preview-tag');
+          previewTag.textContent = optionLabel;
+        }
+      });
+    });
+
+    // Control del reproductor de música
+    const playBtn = document.querySelector('.play-btn');
+    const playIcon = playBtn.querySelector('i');
+    
+    playBtn.addEventListener('click', function() {
+      if (playIcon.classList.contains('fa-play')) {
+        playIcon.classList.remove('fa-play');
+        playIcon.classList.add('fa-pause');
+      } else {
+        playIcon.classList.remove('fa-pause');
+        playIcon.classList.add('fa-play');
+      }
+    });
+
+    // Simular subida de archivos
+    const uploadButtons = document.querySelectorAll('.upload-btn');
+    uploadButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        alert('Funcionalidad de subida de archivos simulada. En una implementación real, esto abriría un selector de archivos.');
+      });
+    });
+  </script>
+</body>
+</html>

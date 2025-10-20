@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - HackerX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --azul-claro: #5dade2;
+      --azul-oscuro: #2874a6;
+      --cyan: #00ffff;
+      --verde-oscuro: #229954;
+      --verde-claro: #58d68d;
+      --morado: #9b59b6;
+      --negro: #0d0d0d;
+      --gris-oscuro: #1a1a1a;
+      --rojo: #e74c3c;
+    }
+
+    body {
+      background-color: var(--negro);
+      color: #e0e0e0;
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navbar superior */
+    .navbar {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20, 20, 20, 0.9);
+      display: flex;
+      gap: 14px;
+      padding: 10px 18px;
+      border-radius: 30px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.2);
+      border: 1px solid rgba(0,255,255,0.2);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      z-index: 1000;
+    }
+
+    /* Logo de la web */
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: cyan;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .logo:hover {
+      background-color: rgba(0,255,255,0.15);
+    }
+
+    /* Íconos */
+    .nav-item {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: cyan;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background-color: rgba(0,255,255,0.15);
+      transform: translateY(-3px);
+    }
+
+    .nav-item.active {
+      background-color: rgba(0,255,255,0.2);
+    }
+
+    /* Tooltip (texto flotante) */
+    .nav-item::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: #00ffff;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .nav-item:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(5px);
+    }
+
+    /* Perfil de usuario */
+    .user-profile {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .user-profile:hover {
+      background-color: rgba(0,255,255,0.15);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid rgba(0,255,255,0.5);
+    }
+
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Menú desplegable */
+    .dropdown-menu {
+      position: absolute;
+      top: 55px;
+      right: 0;
+      background: rgba(20, 20, 20, 0.95);
+      border-radius: 12px;
+      padding: 8px 0;
+      min-width: 200px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,255,255,0.2);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .dropdown-menu.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      color: #e0e0e0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .menu-item:hover {
+      background-color: rgba(0,255,255,0.1);
+      color: cyan;
+    }
+
+    .menu-item i {
+      width: 18px;
+      height: 18px;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background: rgba(0,255,255,0.2);
+      margin: 8px 0;
+    }
+
+    /* Contenido principal */
+    .container {
+      max-width: 800px;
+      margin: 100px auto 40px;
+      padding: 0 20px;
+    }
+
+    /* Crear publicación */
+    .create-post {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .create-post-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .create-post-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .create-post-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .post-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      border-radius: 25px;
+      padding: 12px 20px;
+      color: #e0e0e0;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .post-input:hover {
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .create-post-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 15px;
+      background: transparent;
+      border: none;
+      color: var(--azul-claro);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .action-btn:hover {
+      background: rgba(91, 173, 226, 0.1);
+    }
+
+    /* Filtros */
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+
+    .filter-btn {
+      padding: 8px 20px;
+      background: rgba(40, 116, 166, 0.2);
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      border-radius: 20px;
+      color: var(--azul-claro);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+    }
+
+    .filter-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Publicaciones */
+    .posts-container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .post {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .post-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .post-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .post-user-info {
+      flex: 1;
+    }
+
+    .post-username {
+      font-weight: bold;
+      color: var(--cyan);
+    }
+
+    .post-time {
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+
+    .post-content {
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    /* Media grid */
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .media-item {
+      aspect-ratio: 1;
+      overflow: hidden;
+      border-radius: 8px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .media-item img, .media-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .media-item:hover img, .media-item:hover video {
+      transform: scale(1.05);
+    }
+
+    /* Acciones de publicación */
+    .post-actions {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid rgba(91, 173, 226, 0.2);
+      padding-top: 15px;
+    }
+
+    .post-action {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: none;
+      color: #aaaaaa;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    .post-action:hover {
+      color: var(--azul-claro);
+      background: rgba(91, 173, 226, 0.1);
+    }
+
+    .post-action.liked {
+      color: var(--rojo);
+    }
+
+    /* Comentarios */
+    .comments-section {
+      margin-top: 15px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .comments-section.expanded {
+      max-height: 1000px;
+    }
+
+    .comment {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .comment-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .comment-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .comment-content {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px 15px;
+      border-radius: 18px;
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .comment-username {
+      font-weight: bold;
+      color: var(--azul-claro);
+      font-size: 14px;
+    }
+
+    .comment-time {
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+
+    .comment-text {
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .comment-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 8px;
+    }
+
+    .comment-action {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: transparent;
+      border: none;
+      color: #aaaaaa;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .comment-action:hover {
+      color: var(--azul-claro);
+    }
+
+    .comment-action.liked {
+      color: var(--rojo);
+    }
+
+    .replies {
+      margin-left: 25px;
+      margin-top: 10px;
+      border-left: 2px solid rgba(91, 173, 226, 0.2);
+      padding-left: 15px;
+    }
+
+    .add-comment {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .comment-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      border-radius: 20px;
+      padding: 10px 15px;
+      color: #e0e0e0;
+      font-size: 14px;
+    }
+
+    .send-comment {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .send-comment:hover {
+      transform: scale(1.1);
+    }
+
+    /* Modal para subir publicación */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--gris-oscuro);
+      border-radius: 15px;
+      padding: 25px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 22px;
+      color: var(--cyan);
+    }
+
+    .close-modal {
+      background: transparent;
+      border: none;
+      color: #aaaaaa;
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .close-modal:hover {
+      color: var(--rojo);
+    }
+
+    .media-preview {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .preview-item {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .preview-item img, .preview-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .remove-media {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(231, 76, 60, 0.8);
+      color: white;
+      border: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .upload-actions {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .upload-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(40, 116, 166, 0.2);
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      border-radius: 10px;
+      color: var(--azul-claro);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .upload-btn:hover {
+      background: rgba(40, 116, 166, 0.4);
+    }
+
+    .post-textarea {
+      width: 100%;
+      min-height: 120px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      border-radius: 10px;
+      padding: 15px;
+      color: #e0e0e0;
+      font-size: 16px;
+      margin-bottom: 20px;
+      resize: vertical;
+      font-family: "Inter", sans-serif;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+    }
+
+    .btn {
+      padding: 10px 25px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--verde-claro), var(--verde-oscuro));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(34, 153, 84, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(91, 173, 226, 0.5);
+      color: var(--azul-claro);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(91, 173, 226, 0.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .navbar {
+        gap: 10px;
+        padding: 8px 14px;
+      }
+      
+      .nav-item {
+        width: 36px;
+        height: 36px;
+      }
+      
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .container {
+        margin-top: 80px;
+      }
+      
+      .media-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        gap: 8px;
+        padding: 6px 12px;
+      }
+      
+      .nav-item {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .create-post-actions {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      
+      .filters {
+        gap: 10px;
+      }
+      
+      .filter-btn {
+        padding: 6px 15px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar superior -->
+  <nav class="navbar">
+    <!-- Logo de la web -->
+    <div class="logo">
+      <i data-lucide="globe"></i>
+    </div>
+    
+    <!-- Elementos de navegación -->
+    <div class="nav-item active" data-label="Home"><i data-lucide="home"></i></div>
+    <div class="nav-item" data-label="Chat"><i data-lucide="message-square"></i></div>
+    <div class="nav-item" data-label="Búsqueda"><i data-lucide="search"></i></div>
+    <div class="nav-item" data-label="Equipos"><i data-lucide="users"></i></div>
+    <div class="nav-item" data-label="Flag Ground"><i data-lucide="flag"></i></div>
+    <div class="nav-item" data-label="Clasificatoria"><i data-lucide="trophy"></i></div>
+    <div class="nav-item" data-label="Tienda"><i data-lucide="shopping-bag"></i></div>
+    <div class="nav-item" data-label="Academia"><i data-lucide="book"></i></div>
+    
+    <!-- Perfil de usuario -->
+    <div class="user-profile">
+      <div class="user-avatar" id="userAvatar">
+        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Foto de perfil">
+      </div>
+      
+      <!-- Menú desplegable -->
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="menu-item">
+          <i data-lucide="user"></i>
+          <span>Perfil</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="bell"></i>
+          <span>Notificaciones</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="eye"></i>
+          <span>Vista previa</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="award"></i>
+          <span>Logros</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="download"></i>
+          <span>Descargar VPN</span>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-item">
+          <i data-lucide="log-out"></i>
+          <span>Cerrar sesión</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container">
+    <!-- Crear publicación -->
+    <div class="create-post">
+      <div class="create-post-header">
+        <div class="create-post-avatar">
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Tu avatar">
+        </div>
+        <div class="post-input" id="openCreateModal">
+          ¿Qué estás hackeando hoy, HackerX?
+        </div>
+      </div>
+      <div class="create-post-actions">
+        <button class="action-btn" id="openPhotoModal">
+          <i class="fas fa-image"></i> Foto
+        </button>
+        <button class="action-btn" id="openVideoModal">
+          <i class="fas fa-video"></i> Video
+        </button>
+        <button class="action-btn">
+          <i class="fas fa-map-marker-alt"></i> Ubicación
+        </button>
+        <button class="action-btn">
+          <i class="fas fa-tag"></i> Etiquetar
+        </button>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters">
+      <button class="filter-btn active">Más recientes</button>
+      <button class="filter-btn">Más antiguas</button>
+      <button class="filter-btn">Tus publicaciones</button>
+      <button class="filter-btn">Populares</button>
+      <button class="filter-btn">Seguidos</button>
+    </div>
+
+    <!-- Publicaciones -->
+    <div class="posts-container">
+      <!-- Publicación 1 -->
+      <div class="post">
+        <div class="post-header">
+          <div class="post-avatar">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Avatar">
+          </div>
+          <div class="post-user-info">
+            <div class="post-username">@CyberWarrior</div>
+            <div class="post-time">Hace 2 horas</div>
+          </div>
+        </div>
+        <div class="post-content">
+          Acabo de completar la máquina "HackTheBox - Lame". ¡Fue un reto increíble! La explotación de Samba fue clave para conseguir acceso inicial.
+        </div>
+        <div class="media-grid">
+          <div class="media-item">
+            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Terminal">
+          </div>
+          <div class="media-item">
+            <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Código">
+          </div>
+        </div>
+        <div class="post-actions">
+          <button class="post-action like-btn">
+            <i class="far fa-heart"></i> <span>42</span>
+          </button>
+          <button class="post-action comment-btn">
+            <i class="far fa-comment"></i> <span>8</span>
+          </button>
+          <button class="post-action">
+            <i class="far fa-share-square"></i> Compartir
+          </button>
+        </div>
+        
+        <!-- Comentarios -->
+        <div class="comments-section">
+          <div class="comment">
+            <div class="comment-avatar">
+              <img src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Avatar">
+            </div>
+            <div class="comment-content">
+              <div class="comment-header">
+                <div class="comment-username">@CodeMaster</div>
+                <div class="comment-time">Hace 1 hora</div>
+              </div>
+              <div class="comment-text">
+                ¡Gran trabajo! ¿Usaste msfconsole para la explotación?
+              </div>
+              <div class="comment-actions">
+                <button class="comment-action like-comment">
+                  <i class="far fa-heart"></i> <span>3</span>
+                </button>
+                <button class="comment-action reply-btn">
+                  Responder
+                </button>
+              </div>
+              
+              <!-- Respuestas -->
+              <div class="replies">
+                <div class="comment">
+                  <div class="comment-avatar">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Avatar">
+                  </div>
+                  <div class="comment-content">
+                    <div class="comment-header">
+                      <div class="comment-username">@CyberWarrior</div>
+                      <div class="comment-time">Hace 45 min</div>
+                    </div>
+                    <div class="comment-text">
+                      Sí, exactamente. Usé el módulo exploit/multi/samba/usermap_script
+                    </div>
+                    <div class="comment-actions">
+                      <button class="comment-action like-comment">
+                        <i class="far fa-heart"></i> <span>1</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="add-comment">
+            <div class="comment-avatar">
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Tu avatar">
+            </div>
+            <div class="comment-input" contenteditable="true">Escribe un comentario...</div>
+            <button class="send-comment">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Publicación 2 -->
+      <div class="post">
+        <div class="post-header">
+          <div class="post-avatar">
+            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Avatar">
+          </div>
+          <div class="post-user-info">
+            <div class="post-username">@CryptoQueen</div>
+            <div class="post-time">Hace 5 horas</div>
+          </div>
+        </div>
+        <div class="post-content">
+          Compartiendo mi último script para análisis de tráfico de red. ¡Espero que les sea útil para sus proyectos de pentesting!
+        </div>
+        <div class="media-grid">
+          <div class="media-item">
+            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Script">
+          </div>
+          <div class="media-item">
+            <video controls>
+              <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4">
+              Tu navegador no soporta el elemento video.
+            </video>
+          </div>
+          <div class="media-item">
+            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Red">
+          </div>
+          <div class="media-item">
+            <video controls>
+              <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4">
+              Tu navegador no soporta el elemento video.
+            </video>
+          </div>
+        </div>
+        <div class="post-actions">
+          <button class="post-action like-btn">
+            <i class="far fa-heart"></i> <span>67</span>
+          </button>
+          <button class="post-action comment-btn">
+            <i class="far fa-comment"></i> <span>12</span>
+          </button>
+          <button class="post-action">
+            <i class="far fa-share-square"></i> Compartir
+          </button>
+        </div>
+        
+        <!-- Comentarios (ocultos inicialmente) -->
+        <div class="comments-section">
+          <div class="add-comment">
+            <div class="comment-avatar">
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Tu avatar">
+            </div>
+            <div class="comment-input" contenteditable="true">Escribe un comentario...</div>
+            <button class="send-comment">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para crear publicación -->
+  <div class="modal" id="createModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Crear Publicación</div>
+        <button class="close-modal">&times;</button>
+      </div>
+      
+      <div class="media-preview" id="mediaPreview">
+        <!-- Las imágenes/videos se agregarán aquí dinámicamente -->
+      </div>
+      
+      <div class="upload-actions">
+        <button class="upload-btn" id="addPhoto">
+          <i class="fas fa-image"></i> Agregar Foto
+        </button>
+        <button class="upload-btn" id="addVideo">
+          <i class="fas fa-video"></i> Agregar Video
+        </button>
+      </div>
+      
+      <textarea class="post-textarea" placeholder="¿Qué estás hackeando hoy, HackerX?"></textarea>
+      
+      <div class="modal-actions">
+        <button class="btn btn-secondary">Cancelar</button>
+        <button class="btn btn-primary">Publicar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    
+    // Control del menú desplegable
+    document.getElementById('userAvatar').addEventListener('click', function(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('dropdownMenu');
+      menu.classList.toggle('active');
+    });
+    
+    // Cerrar menú al hacer clic fuera
+    document.addEventListener('click', function() {
+      document.getElementById('dropdownMenu').classList.remove('active');
+    });
+
+    // Abrir modal de creación
+    document.getElementById('openCreateModal').addEventListener('click', function() {
+      document.getElementById('createModal').classList.add('active');
+    });
+
+    // Cerrar modal
+    document.querySelectorAll('.close-modal, .btn-secondary').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.getElementById('createModal').classList.remove('active');
+      });
+    });
+
+    // Funcionalidad de likes en publicaciones
+    document.querySelectorAll('.like-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const icon = this.querySelector('i');
+        const count = this.querySelector('span');
+        
+        if (icon.classList.contains('far')) {
+          icon.classList.remove('far');
+          icon.classList.add('fas');
+          this.classList.add('liked');
+          count.textContent = parseInt(count.textContent) + 1;
+        } else {
+          icon.classList.remove('fas');
+          icon.classList.add('far');
+          this.classList.remove('liked');
+          count.textContent = parseInt(count.textContent) - 1;
+        }
+      });
+    });
+
+    // Funcionalidad de likes en comentarios
+    document.querySelectorAll('.like-comment').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const icon = this.querySelector('i');
+        const count = this.querySelector('span');
+        
+        if (icon.classList.contains('far')) {
+          icon.classList.remove('far');
+          icon.classList.add('fas');
+          this.classList.add('liked');
+          count.textContent = parseInt(count.textContent) + 1;
+        } else {
+          icon.classList.remove('fas');
+          icon.classList.add('far');
+          this.classList.remove('liked');
+          count.textContent = parseInt(count.textContent) - 1;
+        }
+      });
+    });
+
+    // Mostrar/ocultar comentarios
+    document.querySelectorAll('.comment-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const commentsSection = this.closest('.post').querySelector('.comments-section');
+        commentsSection.classList.toggle('expanded');
+      });
+    });
+
+    // Enviar comentarios
+    document.querySelectorAll('.send-comment').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const commentInput = this.previousElementSibling;
+        const commentText = commentInput.textContent.trim();
+        
+        if (commentText && commentText !== 'Escribe un comentario...') {
+          // Aquí iría la lógica para agregar el comentario
+          commentInput.textContent = 'Escribe un comentario...';
+          alert('Comentario enviado: ' + commentText);
+        }
+      });
+    });
+
+    // Simular agregar medios (fotos/videos)
+    let mediaCount = 0;
+    const mediaPreview = document.getElementById('mediaPreview');
+    
+    document.getElementById('addPhoto').addEventListener('click', function() {
+      if (mediaCount < 8) {
+        mediaCount++;
+        const previewItem = document.createElement('div');
+        previewItem.className = 'preview-item';
+        previewItem.innerHTML = `
+          <img src="https://via.placeholder.com/300?text=Foto+${mediaCount}" alt="Preview ${mediaCount}">
+          <button class="remove-media">&times;</button>
+        `;
+        mediaPreview.appendChild(previewItem);
+        
+        // Agregar funcionalidad para eliminar
+        previewItem.querySelector('.remove-media').addEventListener('click', function() {
+          previewItem.remove();
+          mediaCount--;
+        });
+      } else {
+        alert('Máximo 8 medios por publicación (4 fotos + 4 videos)');
+      }
+    });
+    
+    document.getElementById('addVideo').addEventListener('click', function() {
+      if (mediaCount < 8) {
+        mediaCount++;
+        const previewItem = document.createElement('div');
+        previewItem.className = 'preview-item';
+        previewItem.innerHTML = `
+          <video controls>
+            <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4">
+          </video>
+          <button class="remove-media">&times;</button>
+        `;
+        mediaPreview.appendChild(previewItem);
+        
+        // Agregar funcionalidad para eliminar
+        previewItem.querySelector('.remove-media').addEventListener('click', function() {
+          previewItem.remove();
+          mediaCount--;
+        });
+      } else {
+        alert('Máximo 8 medios por publicación (4 fotos + 4 videos)');
+      }
+    });
+
+    // Filtros
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clasificatoria - HackerX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --azul-claro: #5dade2;
+      --azul-oscuro: #2874a6;
+      --cyan: #00ffff;
+      --verde-oscuro: #229954;
+      --verde-claro: #58d68d;
+      --morado: #9b59b6;
+      --negro: #0d0d0d;
+      --gris-oscuro: #1a1a1a;
+      --rojo: #e74c3c;
+      --naranja: #f39c12;
+      --amarillo: #f1c40f;
+      --dorado: #ffd700;
+    }
+
+    body {
+      background-color: var(--negro);
+      color: #e0e0e0;
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navbar superior */
+    .navbar {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20, 20, 20, 0.9);
+      display: flex;
+      gap: 14px;
+      padding: 10px 18px;
+      border-radius: 30px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.2);
+      border: 1px solid rgba(0,255,255,0.2);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      z-index: 1000;
+    }
+
+    /* Logo de la web */
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: cyan;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .logo:hover {
+      background-color: rgba(0,255,255,0.15);
+    }
+
+    /* Íconos */
+    .nav-item {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: cyan;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background-color: rgba(0,255,255,0.15);
+      transform: translateY(-3px);
+    }
+
+    .nav-item.active {
+      background-color: rgba(0,255,255,0.2);
+    }
+
+    /* Tooltip (texto flotante) */
+    .nav-item::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: #00ffff;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .nav-item:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(5px);
+    }
+
+    /* Perfil de usuario */
+    .user-profile {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .user-profile:hover {
+      background-color: rgba(0,255,255,0.15);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid rgba(0,255,255,0.5);
+    }
+
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Menú desplegable */
+    .dropdown-menu {
+      position: absolute;
+      top: 55px;
+      right: 0;
+      background: rgba(20, 20, 20, 0.95);
+      border-radius: 12px;
+      padding: 8px 0;
+      min-width: 200px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,255,255,0.2);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .dropdown-menu.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      color: #e0e0e0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .menu-item:hover {
+      background-color: rgba(0,255,255,0.1);
+      color: cyan;
+    }
+
+    .menu-item i {
+      width: 18px;
+      height: 18px;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background: rgba(0,255,255,0.2);
+      margin: 8px 0;
+    }
+
+    /* Contenido principal */
+    .container {
+      max-width: 1200px;
+      margin: 100px auto 40px;
+      padding: 0 20px;
+    }
+
+    /* Pestañas principales */
+    .main-tabs {
+      display: flex;
+      gap: 0;
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 5px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      overflow-x: auto;
+    }
+
+    .main-tab {
+      flex: 1;
+      padding: 15px 25px;
+      background: transparent;
+      border: none;
+      color: #aaaaaa;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 10px;
+      text-align: center;
+      white-space: nowrap;
+      font-weight: bold;
+    }
+
+    .main-tab.active {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+    }
+
+    /* Contenido de pestañas */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Top Individual */
+    .top-section {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .top-banner {
+      height: 200px;
+      background: linear-gradient(135deg, var(--dorado), #ffed4e);
+      position: relative;
+    }
+
+    .top-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .top-avatar {
+      position: absolute;
+      bottom: -50px;
+      left: 50px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 6px solid var(--negro);
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+
+    .top-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .top-info {
+      padding: 80px 50px 30px;
+    }
+
+    .top-name {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--dorado);
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .top-stats {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+
+    .top-stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--cyan);
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #aaaaaa;
+    }
+
+    .division-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      background: linear-gradient(135deg, var(--dorado), #ffed4e);
+      color: var(--negro);
+      border-radius: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .music-player {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+    }
+
+    .play-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .play-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .song-info {
+      flex: 1;
+    }
+
+    .song-title {
+      font-weight: bold;
+      color: var(--cyan);
+      margin-bottom: 3px;
+    }
+
+    .song-artist {
+      font-size: 14px;
+      color: #aaaaaa;
+    }
+
+    /* Top Equipo */
+    .team-top-section {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      margin-bottom: 30px;
+    }
+
+    .team-top-banner {
+      height: 180px;
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      position: relative;
+    }
+
+    .team-top-avatar {
+      position: absolute;
+      bottom: -40px;
+      left: 40px;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 5px solid var(--negro);
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(91, 173, 226, 0.5);
+    }
+
+    .team-top-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .team-top-info {
+      padding: 60px 40px 25px;
+    }
+
+    .team-top-name {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--cyan);
+      margin-bottom: 15px;
+    }
+
+    /* Leaderboards */
+    .leaderboard-section {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+    }
+
+    .section-title {
+      font-size: 24px;
+      color: var(--cyan);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .leaderboard {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+
+    .leaderboard-item:hover {
+      background: rgba(91, 173, 226, 0.1);
+      border-color: rgba(91, 173, 226, 0.3);
+    }
+
+    .leaderboard-item.current-user {
+      background: rgba(91, 173, 226, 0.2);
+      border-color: var(--azul-claro);
+      margin-top: 20px;
+      position: relative;
+    }
+
+    .leaderboard-item.current-user::before {
+      content: 'TU POSICIÓN';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      background: var(--azul-claro);
+      color: white;
+      padding: 2px 10px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    .leaderboard-rank {
+      font-size: 18px;
+      font-weight: bold;
+      width: 30px;
+      text-align: center;
+    }
+
+    .rank-1 { color: var(--dorado); }
+    .rank-2 { color: var(--azul-claro); }
+    .rank-3 { color: var(--naranja); }
+    .rank-other { color: #aaaaaa; }
+
+    .leaderboard-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .leaderboard-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .leaderboard-info {
+      flex: 1;
+    }
+
+    .leaderboard-name {
+      font-weight: bold;
+      color: var(--cyan);
+      margin-bottom: 3px;
+    }
+
+    .leaderboard-details {
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+
+    .leaderboard-points {
+      font-weight: bold;
+      color: var(--amarillo);
+    }
+
+    .team-leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .team-leaderboard-item:hover {
+      background: rgba(91, 173, 226, 0.1);
+    }
+
+    .team-leaderboard-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .team-leaderboard-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .team-leaderboard-info {
+      flex: 1;
+    }
+
+    .team-leaderboard-name {
+      font-weight: bold;
+      color: var(--cyan);
+      margin-bottom: 5px;
+    }
+
+    .team-leaderboard-members {
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+
+    .team-leaderboard-points {
+      font-weight: bold;
+      color: var(--amarillo);
+      font-size: 18px;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .top-stats {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .top-info {
+        padding: 80px 25px 25px;
+      }
+      
+      .team-top-info {
+        padding: 60px 25px 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        gap: 10px;
+        padding: 8px 14px;
+      }
+      
+      .nav-item {
+        width: 36px;
+        height: 36px;
+      }
+      
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .container {
+        margin-top: 80px;
+      }
+      
+      .main-tabs {
+        flex-direction: column;
+      }
+      
+      .top-avatar {
+        width: 80px;
+        height: 80px;
+        bottom: -30px;
+        left: 25px;
+      }
+      
+      .team-top-avatar {
+        width: 70px;
+        height: 70px;
+        bottom: -25px;
+        left: 25px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .top-name {
+        font-size: 24px;
+      }
+      
+      .team-top-name {
+        font-size: 22px;
+      }
+      
+      .music-player {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+      
+      .leaderboard-item {
+        padding: 12px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar superior -->
+  <nav class="navbar">
+    <!-- Logo de la web -->
+    <div class="logo">
+      <i data-lucide="globe"></i>
+    </div>
+    
+    <!-- Elementos de navegación -->
+    <div class="nav-item" data-label="Home"><i data-lucide="home"></i></div>
+    <div class="nav-item" data-label="Privado"><i data-lucide="message-square"></i></div>
+    <div class="nav-item" data-label="Equipos"><i data-lucide="users"></i></div>
+    <div class="nav-item" data-label="Flag Ground"><i data-lucide="flag"></i></div>
+    <div class="nav-item active" data-label="Clasificatoria"><i data-lucide="trophy"></i></div>
+    
+    <!-- Perfil de usuario -->
+    <div class="user-profile">
+      <div class="user-avatar" id="userAvatar">
+        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Foto de perfil">
+      </div>
+      
+      <!-- Menú desplegable -->
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="menu-item">
+          <i data-lucide="user"></i>
+          <span>Perfil</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="bell"></i>
+          <span>Notificaciones</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="eye"></i>
+          <span>Vista previa</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="award"></i>
+          <span>Logros</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="download"></i>
+          <span>Descargar VPN</span>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-item">
+          <i data-lucide="log-out"></i>
+          <span>Cerrar sesión</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container">
+    <!-- Pestañas principales -->
+    <div class="main-tabs">
+      <button class="main-tab active" data-tab="topUser">Top Usuario</button>
+      <button class="main-tab" data-tab="topTeam">Top Equipo</button>
+      <button class="main-tab" data-tab="usersLeaderboard">Top 10 Usuarios</button>
+      <button class="main-tab" data-tab="teamsLeaderboard">Top 5 Equipos</button>
+    </div>
+
+    <!-- Top Usuario -->
+    <div class="tab-content active" id="topUserTab">
+      <div class="top-section">
+        <div class="top-banner"></div>
+        <div class="top-avatar">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="CyberWarrior">
+        </div>
+        <div class="top-info">
+          <h1 class="top-name">@CyberWarrior</h1>
+          <div class="top-stats">
+            <div class="top-stat">
+              <div class="stat-value">42,850</div>
+              <div class="stat-label">Puntos Totales</div>
+            </div>
+            <div class="top-stat">
+              <div class="stat-value">156</div>
+              <div class="stat-label">Máquinas Completadas</div>
+            </div>
+            <div class="top-stat">
+              <div class="stat-value">89</div>
+              <div class="stat-label">Primeras Sangres</div>
+            </div>
+          </div>
+          <div class="division-badge">División: Élite</div>
+          <div class="music-player">
+            <div class="play-btn" id="userPlayBtn">
+              <i class="fas fa-play"></i>
+            </div>
+            <div class="song-info">
+              <div class="song-title">Digital Warfare</div>
+              <div class="song-artist">Cyber Symphony</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Equipo -->
+    <div class="tab-content" id="topTeamTab">
+      <div class="team-top-section">
+        <div class="team-top-banner"></div>
+        <div class="team-top-avatar">
+          <img src="https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Cyber Warriors">
+        </div>
+        <div class="team-top-info">
+          <h1 class="team-top-name">Cyber Warriors</h1>
+          <div class="top-stats">
+            <div class="top-stat">
+              <div class="stat-value">156,420</div>
+              <div class="stat-label">Puntos del Equipo</div>
+            </div>
+            <div class="top-stat">
+              <div class="stat-value">24</div>
+              <div class="stat-label">Miembros</div>
+            </div>
+            <div class="top-stat">
+              <div class="stat-value">892</div>
+              <div class="stat-label">Retos Completados</div>
+            </div>
+          </div>
+          <div class="music-player">
+            <div class="play-btn" id="teamPlayBtn">
+              <i class="fas fa-play"></i>
+            </div>
+            <div class="song-info">
+              <div class="song-title">Team Anthem</div>
+              <div class="song-artist">Cyber Warriors OST</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top 10 Usuarios -->
+    <div class="tab-content" id="usersLeaderboardTab">
+      <div class="leaderboard-section">
+        <h2 class="section-title">Top 10 Usuarios Global</h2>
+        <div class="leaderboard">
+          <!-- Top 1-10 -->
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank rank-1">1</div>
+            <div class="leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="CyberWarrior">
+            </div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">@CyberWarrior</div>
+              <div class="leaderboard-details">División Élite • 156 máquinas</div>
+            </div>
+            <div class="leaderboard-points">42,850</div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank rank-2">2</div>
+            <div class="leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="CryptoQueen">
+            </div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">@CryptoQueen</div>
+              <div class="leaderboard-details">División Maestro • 142 máquinas</div>
+            </div>
+            <div class="leaderboard-points">38,920</div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank rank-3">3</div>
+            <div class="leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="CodeMaster">
+            </div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">@CodeMaster</div>
+              <div class="leaderboard-details">División Maestro • 138 máquinas</div>
+            </div>
+            <div class="leaderboard-points">36,450</div>
+          </div>
+
+          <!-- Posiciones 4-10 -->
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank rank-other">4</div>
+            <div class="leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="ZeroDay">
+            </div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">@ZeroDay</div>
+              <div class="leaderboard-details">División Maestro • 134 máquinas</div>
+            </div>
+            <div class="leaderboard-points">34,120</div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank rank-other">5</div>
+            <div class="leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="BinaryHunter">
+            </div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">@BinaryHunter</div>
+              <div class="leaderboard-details">División Avanzado • 128 máquinas</div>
+            </div>
+            <div class="leaderboard-points">31,780</div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank rank-other">6</div>
+            <div class="leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="NetSecPro">
+            </div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">@NetSecPro</div>
+              <div class="leaderboard-details">División Avanzado • 125 máquinas</div>
+            </div>
+            <div class="leaderboard-points">29,450</div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank rank-other">7</div>
+            <div class="leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="GhostInShell">
+            </div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">@GhostInShell</div>
+              <div class="leaderboard-details">División Avanzado • 121 máquinas</div>
+            </div>
+            <div class="leaderboard-points">27,890</div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank rank-other">8</div>
+            <div class="leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="PythonWizard">
+            </div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">@PythonWizard</div>
+              <div class="leaderboard-details">División Avanzado • 118 máquinas</div>
+            </div>
+            <div class="leaderboard-points">25,670</div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank rank-other">9</div>
+            <div class="leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="RubyRogue">
+            </div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">@RubyRogue</div>
+              <div class="leaderboard-details">División Intermedio • 115 máquinas</div>
+            </div>
+            <div class="leaderboard-points">23,450</div>
+          </div>
+
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank rank-other">10</div>
+            <div class="leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="JavaJungle">
+            </div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">@JavaJungle</div>
+              <div class="leaderboard-details">División Intermedio • 112 máquinas</div>
+            </div>
+            <div class="leaderboard-points">21,230</div>
+          </div>
+
+          <!-- Usuario actual (posición 47) -->
+          <div class="leaderboard-item current-user">
+            <div class="leaderboard-rank rank-other">47</div>
+            <div class="leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="HackerX">
+            </div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">@HackerX</div>
+              <div class="leaderboard-details">División Intermedio • 89 máquinas</div>
+            </div>
+            <div class="leaderboard-points">15,840</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top 5 Equipos -->
+    <div class="tab-content" id="teamsLeaderboardTab">
+      <div class="leaderboard-section">
+        <h2 class="section-title">Top 5 Equipos Global</h2>
+        <div class="leaderboard">
+          <div class="team-leaderboard-item">
+            <div class="leaderboard-rank rank-1">1</div>
+            <div class="team-leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Cyber Warriors">
+            </div>
+            <div class="team-leaderboard-info">
+              <div class="team-leaderboard-name">Cyber Warriors</div>
+              <div class="team-leaderboard-members">24 miembros • Líder: @CyberWarrior</div>
+            </div>
+            <div class="team-leaderboard-points">156,420</div>
+          </div>
+
+          <div class="team-leaderboard-item">
+            <div class="leaderboard-rank rank-2">2</div>
+            <div class="team-leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Zero Day">
+            </div>
+            <div class="team-leaderboard-info">
+              <div class="team-leaderboard-name">Zero Day</div>
+              <div class="team-leaderboard-members">18 miembros • Líder: @CodeMaster</div>
+            </div>
+            <div class="team-leaderboard-points">142,890</div>
+          </div>
+
+          <div class="team-leaderboard-item">
+            <div class="leaderboard-rank rank-3">3</div>
+            <div class="team-leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Crypto Hackers">
+            </div>
+            <div class="team-leaderboard-info">
+              <div class="team-leaderboard-name">Crypto Hackers</div>
+              <div class="team-leaderboard-members">22 miembros • Líder: @CryptoQueen</div>
+            </div>
+            <div class="team-leaderboard-points">128,450</div>
+          </div>
+
+          <div class="team-leaderboard-item">
+            <div class="leaderboard-rank rank-other">4</div>
+            <div class="team-leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Binary Exploiters">
+            </div>
+            <div class="team-leaderboard-info">
+              <div class="team-leaderboard-name">Binary Exploiters</div>
+              <div class="team-leaderboard-members">16 miembros • Líder: @BinaryHunter</div>
+            </div>
+            <div class="team-leaderboard-points">115,670</div>
+          </div>
+
+          <div class="team-leaderboard-item">
+            <div class="leaderboard-rank rank-other">5</div>
+            <div class="team-leaderboard-avatar">
+              <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Network Ninjas">
+            </div>
+            <div class="team-leaderboard-info">
+              <div class="team-leaderboard-name">Network Ninjas</div>
+              <div class="team-leaderboard-members">20 miembros • Líder: @NetSecPro</div>
+            </div>
+            <div class="team-leaderboard-points">98,340</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    
+    // Control del menú desplegable
+    document.getElementById('userAvatar').addEventListener('click', function(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('dropdownMenu');
+      menu.classList.toggle('active');
+    });
+    
+    // Cerrar menú al hacer clic fuera
+    document.addEventListener('click', function() {
+      document.getElementById('dropdownMenu').classList.remove('active');
+    });
+
+    // Cambiar entre pestañas principales
+    document.querySelectorAll('.main-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        
+        // Remover activo de todas las pestañas
+        document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Activar pestaña seleccionada
+        this.classList.add('active');
+        document.getElementById(`${tabId}Tab`).classList.add('active');
+      });
+    });
+
+    // Control de música para top usuario
+    const userPlayBtn = document.getElementById('userPlayBtn');
+    const userPlayIcon = userPlayBtn.querySelector('i');
+    
+    userPlayBtn.addEventListener('click', function() {
+      if (userPlayIcon.classList.contains('fa-play')) {
+        userPlayIcon.classList.remove('fa-play');
+        userPlayIcon.classList.add('fa-pause');
+        // Aquí iría la lógica para reproducir música
+      } else {
+        userPlayIcon.classList.remove('fa-pause');
+        userPlayIcon.classList.add('fa-play');
+        // Aquí iría la lógica para pausar música
+      }
+    });
+
+    // Control de música para top equipo
+    const teamPlayBtn = document.getElementById('teamPlayBtn');
+    const teamPlayIcon = teamPlayBtn.querySelector('i');
+    
+    teamPlayBtn.addEventListener('click', function() {
+      if (teamPlayIcon.classList.contains('fa-play')) {
+        teamPlayIcon.classList.remove('fa-play');
+        teamPlayIcon.classList.add('fa-pause');
+        // Aquí iría la lógica para reproducir música
+      } else {
+        teamPlayIcon.classList.remove('fa-pause');
+        teamPlayIcon.classList.add('fa-play');
+        // Aquí iría la lógica para pausar música
+      }
+    });
+
+    // Efecto de brillo en el banner del top 1
+    const topBanner = document.querySelector('.top-banner');
+    setInterval(() => {
+      topBanner.style.background = `linear-gradient(135deg, ${getRandomColor()}, ${getRandomColor()})`;
+    }, 5000);
+
+    function getRandomColor() {
+      const colors = [
+        '#ffd700', '#ffed4e', '#fff200', '#ff6b6b', 
+        '#ffa726', '#ffee58', '#4caf50', '#2196f3', '#9c27b0'
+      ];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+  </script>
+</body>
+</html>

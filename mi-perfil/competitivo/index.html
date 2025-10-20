@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competitivo - HackerX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --azul-claro: #5dade2;
+      --azul-oscuro: #2874a6;
+      --cyan: #00ffff;
+      --verde-oscuro: #229954;
+      --verde-claro: #58d68d;
+      --morado: #9b59b6;
+      --negro: #0d0d0d;
+      --gris-oscuro: #1a1a1a;
+    }
+
+    body {
+      background-color: var(--negro);
+      color: #e0e0e0;
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navbar inferior */
+    .navbar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(26, 26, 26, 0.95);
+      display: flex;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 30px;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      z-index: 1000;
+    }
+
+    /* Íconos */
+    .nav-item {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cyan);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      transform: translateY(-5px);
+      color: white;
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+    }
+
+    /* Tooltip (texto flotante) */
+    .nav-item::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: var(--cyan);
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .nav-item:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-5px);
+    }
+
+    /* Contenido principal */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px 100px;
+    }
+
+    /* Encabezado */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .username {
+      font-size: 36px;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--azul-claro), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: var(--azul-claro);
+    }
+
+    /* Sección de estadísticas competitivas */
+    .competitive-stats-section {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 20px;
+      padding: 30px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      margin-bottom: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .competitive-title {
+      font-size: 32px;
+      background: linear-gradient(135deg, var(--cyan), var(--azul-claro));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 25px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .stat-item {
+      background: linear-gradient(135deg, rgba(40, 116, 166, 0.2), rgba(155, 89, 182, 0.2));
+      border-radius: 15px;
+      padding: 25px 20px;
+      text-align: center;
+      border: 1px solid rgba(91, 173, 226, 0.2);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--cyan), var(--azul-claro));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 16px;
+      color: #aaaaaa;
+    }
+
+    /* Barra de progreso de división */
+    .division-container {
+      margin-top: 15px;
+    }
+
+    .division-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .division-text {
+      font-size: 16px;
+      color: var(--azul-claro);
+    }
+
+    .next-division {
+      font-size: 14px;
+      color: #aaaaaa;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: rgba(40, 116, 166, 0.3);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 5px;
+    }
+
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, var(--verde-claro), var(--verde-oscuro));
+      border-radius: 10px;
+      width: 85%;
+      transition: width 1s ease;
+    }
+
+    .progress-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+
+    .progress-percentage {
+      color: var(--verde-claro);
+    }
+
+    .progress-points {
+      color: var(--azul-claro);
+    }
+
+    /* Sección de gráficas */
+    .charts-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .chart-container {
+      background: linear-gradient(135deg, rgba(40, 116, 166, 0.2), rgba(155, 89, 182, 0.2));
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .chart-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .chart-title {
+      font-size: 20px;
+      color: var(--cyan);
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 300px;
+      width: 100%;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .charts-section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        bottom: 10px;
+        padding: 10px 15px;
+      }
+      
+      .container {
+        padding: 20px 15px 100px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .username {
+        font-size: 28px;
+      }
+      
+      .competitive-title {
+        font-size: 26px;
+      }
+      
+      .chart-wrapper {
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Contenido principal -->
+  <div class="container">
+    <!-- Encabezado -->
+    <div class="header">
+      <div class="username">@HackerX</div>
+      <div class="subtitle">Estadísticas Competitivas</div>
+    </div>
+    
+    <!-- Sección de estadísticas competitivas -->
+    <div class="competitive-stats-section">
+      <h2 class="competitive-title">Rendimiento Competitivo</h2>
+      
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">#247</div>
+          <div class="stat-label">Ranking Global</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">156</div>
+          <div class="stat-label">Máquinas Hechas</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">42</div>
+          <div class="stat-label">Máquinas de Temporada</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">89</div>
+          <div class="stat-label">Sistemas Penetrados</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">67</div>
+          <div class="stat-label">Sistemas Comprometidos</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">23</div>
+          <div class="stat-label">Primeras Sangres</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">Élite</div>
+          <div class="stat-label">División</div>
+          <div class="division-container">
+            <div class="division-info">
+              <div class="division-text">División Élite</div>
+              <div class="next-division">Siguiente: Maestro</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress"></div>
+            </div>
+            <div class="progress-details">
+              <div class="progress-percentage">85%</div>
+              <div class="progress-points">850/1000 Puntos</div>
+            </div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">CTF Winter</div>
+          <div class="stat-label">Último Evento</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">Avanzado</div>
+          <div class="stat-label">División Anterior</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">134</div>
+          <div class="stat-label">PvP Ganados</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">89</div>
+          <div class="stat-label">TvT Ganados</div>
+        </div>
+      </div>
+      
+      <!-- Sección de gráficas -->
+      <h2 class="competitive-title" style="margin-top: 40px;">Análisis de Habilidades</h2>
+      
+      <div class="charts-section">
+        <div class="chart-container">
+          <div class="chart-title">Categorías del Usuario</div>
+          <div class="chart-wrapper">
+            <canvas id="categoriesChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <div class="chart-title">OS de Máquinas Completadas</div>
+          <div class="chart-wrapper">
+            <canvas id="osChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <div class="chart-title">Dificultad de Máquinas</div>
+          <div class="chart-wrapper">
+            <canvas id="difficultyChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navbar inferior -->
+  <nav class="navbar">
+    <div class="nav-item" data-label="Casa"><i data-lucide="home"></i></div>
+    <div class="nav-item" data-label="Resumen"><i data-lucide="user"></i></div>
+    <div class="nav-item" data-label="Social"><i data-lucide="users"></i></div>
+    <div class="nav-item active" data-label="Competitivo"><i data-lucide="trophy"></i></div>
+    <div class="nav-item" data-label="Galería"><i data-lucide="image"></i></div>
+    <div class="nav-item" data-label="Stories"><i data-lucide="plus-circle"></i></div>
+    <div class="nav-item" data-label="Personalización"><i data-lucide="palette"></i></div>
+    <div class="nav-item" data-label="Privacidad"><i data-lucide="lock"></i></div>
+    <div class="nav-item" data-label="Configuración"><i data-lucide="settings"></i></div>
+  </nav>
+
+  <script>
+    lucide.createIcons();
+    
+    // Destacar el elemento activo en la navbar
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      item.addEventListener('click', function() {
+        navItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Gráfica de Categorías del Usuario
+    const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
+    const categoriesChart = new Chart(categoriesCtx, {
+      type: 'radar',
+      data: {
+        labels: ['Web Hacking', 'Network Hacking', 'Exploit Dev', 'OS Hacking', 'Reversing', 'Criptografía', 'OSINT', 'Forensics'],
+        datasets: [{
+          label: 'Habilidades',
+          data: [85, 70, 60, 75, 80, 65, 55, 70],
+          backgroundColor: 'rgba(14, 165, 164, 0.2)',
+          borderColor: '#0EA5A4',
+          pointBackgroundColor: ['#0EA5A4', '#FF3B30', '#0F172A', '#F59E0B', '#6B21A8', '#0284C7', '#374151', '#0EA5A4'],
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#0EA5A4'
+        }]
+      },
+      options: {
+        scales: {
+          r: {
+            angleLines: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            pointLabels: {
+              color: '#e0e0e0',
+              font: {
+                size: 11
+              }
+            },
+            ticks: {
+              backdropColor: 'transparent',
+              color: '#aaaaaa',
+              showLabelBackdrop: false
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#e0e0e0'
+            }
+          }
+        }
+      }
+    });
+
+    // Gráfica de OS de Máquinas Completadas
+    const osCtx = document.getElementById('osChart').getContext('2d');
+    const osChart = new Chart(osCtx, {
+      type: 'radar',
+      data: {
+        labels: ['Windows', 'GNU/Linux', 'FreeBSD', 'Android'],
+        datasets: [{
+          label: 'Máquinas por OS',
+          data: [65, 90, 40, 30],
+          backgroundColor: 'rgba(0, 120, 215, 0.2)',
+          borderColor: '#0078D7',
+          pointBackgroundColor: ['#0078D7', '#FCC624', '#AB2B28', '#3DDC84'],
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#0078D7'
+        }]
+      },
+      options: {
+        scales: {
+          r: {
+            angleLines: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            pointLabels: {
+              color: '#e0e0e0',
+              font: {
+                size: 11
+              }
+            },
+            ticks: {
+              backdropColor: 'transparent',
+              color: '#aaaaaa',
+              showLabelBackdrop: false
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#e0e0e0'
+            }
+          }
+        }
+      }
+    });
+
+    // Gráfica de Dificultad de Máquinas
+    const difficultyCtx = document.getElementById('difficultyChart').getContext('2d');
+    const difficultyChart = new Chart(difficultyCtx, {
+      type: 'radar',
+      data: {
+        labels: ['Muy fácil', 'Fácil', 'Intermedio', 'Difícil', 'Jodido'],
+        datasets: [{
+          label: 'Máquinas por Dificultad',
+          data: [80, 70, 60, 40, 20],
+          backgroundColor: 'rgba(22, 163, 74, 0.2)',
+          borderColor: '#16A34A',
+          pointBackgroundColor: ['#16A34A', '#3B82F6', '#FBBF24', '#EF4444', '#7C3AED'],
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#16A34A'
+        }]
+      },
+      options: {
+        scales: {
+          r: {
+            angleLines: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            pointLabels: {
+              color: '#e0e0e0',
+              font: {
+                size: 11
+              }
+            },
+            ticks: {
+              backdropColor: 'transparent',
+              color: '#aaaaaa',
+              showLabelBackdrop: false
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#e0e0e0'
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

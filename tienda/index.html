@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda - HackerX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --azul-claro: #5dade2;
+      --azul-oscuro: #2874a6;
+      --cyan: #00ffff;
+      --verde-oscuro: #229954;
+      --verde-claro: #58d68d;
+      --morado: #9b59b6;
+      --negro: #0d0d0d;
+      --gris-oscuro: #1a1a1a;
+      --rojo: #e74c3c;
+      --naranja: #f39c12;
+      --amarillo: #f1c40f;
+      --dorado: #ffd700;
+    }
+
+    body {
+      background-color: var(--negro);
+      color: #e0e0e0;
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navbar superior */
+    .navbar {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20, 20, 20, 0.9);
+      display: flex;
+      gap: 14px;
+      padding: 10px 18px;
+      border-radius: 30px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.2);
+      border: 1px solid rgba(0,255,255,0.2);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      z-index: 1000;
+    }
+
+    /* Logo de la web */
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: cyan;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .logo:hover {
+      background-color: rgba(0,255,255,0.15);
+    }
+
+    /* Íconos */
+    .nav-item {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: cyan;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background-color: rgba(0,255,255,0.15);
+      transform: translateY(-3px);
+    }
+
+    .nav-item.active {
+      background-color: rgba(0,255,255,0.2);
+    }
+
+    /* Tooltip (texto flotante) */
+    .nav-item::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: #00ffff;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .nav-item:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(5px);
+    }
+
+    /* Perfil de usuario */
+    .user-profile {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .user-profile:hover {
+      background-color: rgba(0,255,255,0.15);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid rgba(0,255,255,0.5);
+    }
+
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Menú desplegable */
+    .dropdown-menu {
+      position: absolute;
+      top: 55px;
+      right: 0;
+      background: rgba(20, 20, 20, 0.95);
+      border-radius: 12px;
+      padding: 8px 0;
+      min-width: 200px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,255,255,0.2);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .dropdown-menu.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      color: #e0e0e0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .menu-item:hover {
+      background-color: rgba(0,255,255,0.1);
+      color: cyan;
+    }
+
+    .menu-item i {
+      width: 18px;
+      height: 18px;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background: rgba(0,255,255,0.2);
+      margin: 8px 0;
+    }
+
+    /* Contenido principal */
+    .container {
+      max-width: 1200px;
+      margin: 100px auto 40px;
+      padding: 0 20px;
+    }
+
+    /* Saldo de FCoins */
+    .balance-section {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      text-align: center;
+    }
+
+    .balance-title {
+      font-size: 18px;
+      color: #aaaaaa;
+      margin-bottom: 10px;
+    }
+
+    .balance-amount {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--amarillo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* Pestañas principales */
+    .main-tabs {
+      display: flex;
+      gap: 0;
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 5px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      overflow-x: auto;
+    }
+
+    .main-tab {
+      flex: 1;
+      padding: 15px 20px;
+      background: transparent;
+      border: none;
+      color: #aaaaaa;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 10px;
+      text-align: center;
+      white-space: nowrap;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .main-tab.active {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+    }
+
+    /* Contenido de pestañas */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Pase de Batalla */
+    .battle-pass {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 30px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      margin-bottom: 30px;
+    }
+
+    .bp-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .bp-title {
+      font-size: 28px;
+      color: var(--cyan);
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--cyan), var(--azul-claro));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .bp-subtitle {
+      color: #aaaaaa;
+      margin-bottom: 20px;
+    }
+
+    .bp-tiers {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .bp-tier {
+      flex: 1;
+      text-align: center;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .bp-tier.free {
+      background: rgba(91, 173, 226, 0.1);
+      border-color: var(--azul-claro);
+    }
+
+    .bp-tier.premium {
+      background: rgba(255, 215, 0, 0.1);
+      border-color: var(--dorado);
+    }
+
+    .bp-tier-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .bp-tier.free .bp-tier-title {
+      color: var(--azul-claro);
+    }
+
+    .bp-tier.premium .bp-tier-title {
+      color: var(--dorado);
+    }
+
+    .bp-tier-price {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .bp-features {
+      list-style: none;
+      text-align: left;
+    }
+
+    .bp-feature {
+      padding: 5px 0;
+      color: #aaaaaa;
+    }
+
+    .bp-feature i {
+      margin-right: 8px;
+    }
+
+    .bp-feature.premium {
+      color: var(--dorado);
+    }
+
+    .bp-levels {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .bp-level {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      border: 1px solid rgba(91, 173, 226, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .bp-level.current {
+      border-color: var(--cyan);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    }
+
+    .bp-level-number {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--cyan);
+      margin-bottom: 8px;
+    }
+
+    .bp-rewards {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .bp-reward {
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+
+    .bp-reward.premium {
+      color: var(--dorado);
+    }
+
+    .bp-actions {
+      text-align: center;
+    }
+
+    /* Items de tienda */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .shop-item {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .shop-item:hover {
+      transform: translateY(-5px);
+      border-color: var(--cyan);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .item-preview {
+      width: 100%;
+      height: 150px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+
+    .item-name {
+      font-size: 18px;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .item-price {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--amarillo);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Botones */
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--verde-claro), var(--verde-oscuro));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(34, 153, 84, 0.4);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(91, 173, 226, 0.4);
+    }
+
+    .btn-disabled {
+      background: #7f8c8d;
+      color: white;
+      cursor: not-allowed;
+    }
+
+    /* Vista previa personalización */
+    .preview-section {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .preview-title {
+      font-size: 22px;
+      color: var(--cyan);
+      margin-bottom: 20px;
+    }
+
+    .preview-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .preview-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .preview-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-info {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 300px;
+    }
+
+    .preview-username {
+      font-size: 20px;
+      color: var(--cyan);
+      font-weight: bold;
+    }
+
+    .preview-bio {
+      color: #aaaaaa;
+      line-height: 1.4;
+    }
+
+    /* Paquetes FCoins */
+    .packages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+    }
+
+    .package {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .package:hover {
+      transform: translateY(-5px);
+      border-color: var(--amarillo);
+    }
+
+    .package.popular {
+      border-color: var(--dorado);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--dorado);
+      color: var(--negro);
+      padding: 5px 15px;
+      border-radius: 15px;
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    .package-coins {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--amarillo);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .package-price {
+      font-size: 24px;
+      color: var(--cyan);
+      margin-bottom: 15px;
+    }
+
+    .package-bonus {
+      background: rgba(255, 215, 0, 0.1);
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      color: var(--dorado);
+      font-weight: bold;
+    }
+
+    .bitcoin-info {
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(247, 147, 26, 0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(247, 147, 26, 0.3);
+    }
+
+    .bitcoin-icon {
+      color: #f7931a;
+      margin-right: 5px;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .bp-tiers {
+        flex-direction: column;
+      }
+      
+      .preview-container {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .shop-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        gap: 10px;
+        padding: 8px 14px;
+      }
+      
+      .nav-item {
+        width: 36px;
+        height: 36px;
+      }
+      
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .container {
+        margin-top: 80px;
+      }
+      
+      .main-tabs {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .bp-levels {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      }
+      
+      .item-actions {
+        flex-direction: column;
+      }
+      
+      .packages-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar superior -->
+  <nav class="navbar">
+    <!-- Logo de la web -->
+    <div class="logo">
+      <i data-lucide="globe"></i>
+    </div>
+    
+    <!-- Elementos de navegación -->
+    <div class="nav-item" data-label="Home"><i data-lucide="home"></i></div>
+    <div class="nav-item" data-label="Privado"><i data-lucide="message-square"></i></div>
+    <div class="nav-item" data-label="Equipos"><i data-lucide="users"></i></div>
+    <div class="nav-item" data-label="Flag Ground"><i data-lucide="flag"></i></div>
+    <div class="nav-item" data-label="Clasificatoria"><i data-lucide="trophy"></i></div>
+    <div class="nav-item active" data-label="Tienda"><i data-lucide="shopping-bag"></i></div>
+    
+    <!-- Perfil de usuario -->
+    <div class="user-profile">
+      <div class="user-avatar" id="userAvatar">
+        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Foto de perfil">
+      </div>
+      
+      <!-- Menú desplegable -->
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="menu-item">
+          <i data-lucide="user"></i>
+          <span>Perfil</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="bell"></i>
+          <span>Notificaciones</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="eye"></i>
+          <span>Vista previa</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="award"></i>
+          <span>Logros</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="download"></i>
+          <span>Descargar VPN</span>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-item">
+          <i data-lucide="log-out"></i>
+          <span>Cerrar sesión</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container">
+    <!-- Saldo de FCoins -->
+    <div class="balance-section">
+      <div class="balance-title">Tu Saldo</div>
+      <div class="balance-amount">
+        <i class="fas fa-gem" style="color: var(--amarillo);"></i>
+        <span id="userBalance">850</span> FCoins
+      </div>
+    </div>
+
+    <!-- Pestañas principales -->
+    <div class="main-tabs">
+      <button class="main-tab active" data-tab="battlepass">Pase de Batalla</button>
+      <button class="main-tab" data-tab="palettes">Paletas de Colores</button>
+      <button class="main-tab" data-tab="borders">Bordes de Avatar</button>
+      <button class="main-tab" data-tab="backgrounds">Fondos</button>
+      <button class="main-tab" data-tab="cursors">Cursores</button>
+      <button class="main-tab" data-tab="packages">Paquetes FCoins</button>
+    </div>
+
+    <!-- Pase de Batalla -->
+    <div class="tab-content active" id="battlepassTab">
+      <div class="battle-pass">
+        <div class="bp-header">
+          <h1 class="bp-title">Pase de Batalla Season 5</h1>
+          <p class="bp-subtitle">Desbloquea recompensas exclusivas subiendo de nivel</p>
+          <div class="balance-amount" style="font-size: 24px; justify-content: center;">
+            <i class="fas fa-chart-line" style="color: var(--cyan);"></i>
+            Nivel Actual: <span style="color: var(--cyan); margin-left: 5px;">24</span>
+          </div>
+        </div>
+
+        <div class="bp-tiers">
+          <div class="bp-tier free">
+            <div class="bp-tier-title">Gratis</div>
+            <div class="bp-tier-price">$0</div>
+            <ul class="bp-features">
+              <li class="bp-feature"><i class="fas fa-check" style="color: var(--verde-claro);"></i> 25 niveles</li>
+              <li class="bp-feature"><i class="fas fa-check" style="color: var(--verde-claro);"></i> Recompensas básicas</li>
+              <li class="bp-feature"><i class="fas fa-check" style="color: var(--verde-claro);"></i> XP boost</li>
+              <li class="bp-feature"><i class="fas fa-times" style="color: var(--rojo);"></i> Recompensas premium</li>
+              <li class="bp-feature"><i class="fas fa-times" style="color: var(--rojo);"></i> Insignias exclusivas</li>
+            </ul>
+          </div>
+          <div class="bp-tier premium">
+            <div class="bp-tier-title">Premium</div>
+            <div class="bp-tier-price">1,200 FCoins</div>
+            <ul class="bp-features">
+              <li class="bp-feature premium"><i class="fas fa-crown"></i> 50 niveles premium</li>
+              <li class="bp-feature premium"><i class="fas fa-gem"></i> Recompensas exclusivas</li>
+              <li class="bp-feature premium"><i class="fas fa-rocket"></i> XP boost 2x</li>
+              <li class="bp-feature premium"><i class="fas fa-shield-alt"></i> Insignias animadas</li>
+              <li class="bp-feature premium"><i class="fas fa-star"></i> Desbloqueo inmediato</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="bp-levels">
+          <!-- Niveles 1-5 -->
+          <div class="bp-level">
+            <div class="bp-level-number">Nivel 1</div>
+            <div class="bp-rewards">
+              <div class="bp-reward">50 FCoins</div>
+              <div class="bp-reward premium">Avatar Border</div>
+            </div>
+          </div>
+          <div class="bp-level">
+            <div class="bp-level-number">Nivel 5</div>
+            <div class="bp-rewards">
+              <div class="bp-reward">100 FCoins</div>
+              <div class="bp-reward premium">Paleta Neon</div>
+            </div>
+          </div>
+          <div class="bp-level current">
+            <div class="bp-level-number">Nivel 10</div>
+            <div class="bp-rewards">
+              <div class="bp-reward">150 FCoins</div>
+              <div class="bp-reward premium">Cursor Hacker</div>
+            </div>
+          </div>
+          <div class="bp-level">
+            <div class="bp-level-number">Nivel 15</div>
+            <div class="bp-rewards">
+              <div class="bp-reward">200 FCoins</div>
+              <div class="bp-reward premium">Fondo Matrix</div>
+            </div>
+          </div>
+          <div class="bp-level">
+            <div class="bp-level-number">Nivel 20</div>
+            <div class="bp-rewards">
+              <div class="bp-reward">300 FCoins</div>
+              <div class="bp-reward premium">Insignia Élite</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bp-actions">
+          <button class="btn btn-secondary" id="buyBattlePass">
+            <i class="fas fa-crown"></i> Comprar Pase Premium - 1,200 FCoins
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paletas de Colores -->
+    <div class="tab-content" id="palettesTab">
+      <div class="preview-section">
+        <h2 class="preview-title">Vista Previa - Paleta Actual</h2>
+        <div class="preview-container">
+          <div class="preview-avatar" id="previewAvatar">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Avatar">
+          </div>
+          <div class="preview-info">
+            <div class="preview-username">@HackerX</div>
+            <div class="preview-bio">Desarrollador de software y entusiasta de la ciberseguridad. Siempre aprendiendo nuevas tecnologías.</div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+              <div style="padding: 8px 15px; background: var(--azul-claro); border-radius: 15px; color: white; font-size: 12px;">Seguidores: 1,247</div>
+              <div style="padding: 8px 15px; background: var(--morado); border-radius: 15px; color: white; font-size: 12px;">Nivel: 78</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="shop-grid">
+        <div class="shop-item">
+          <div class="item-preview" style="background: linear-gradient(135deg, #5dade2, #9b59b6);">
+            <i class="fas fa-palette" style="color: white;"></i>
+          </div>
+          <h3 class="item-name">Neon Cyber</h3>
+          <div class="item-price">
+            <i class="fas fa-gem"></i> 400 FCoins
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-primary">
+              <i class="fas fa-shopping-cart"></i> Comprar
+            </button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div class="item-preview" style="background: linear-gradient(135deg, #00ffff, #00b3b3);">
+            <i class="fas fa-palette" style="color: white;"></i>
+          </div>
+          <h3 class="item-name">Matrix Green</h3>
+          <div class="item-price">
+            <i class="fas fa-gem"></i> 350 FCoins
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-primary">
+              <i class="fas fa-shopping-cart"></i> Comprar
+            </button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div class="item-preview" style="background: linear-gradient(135deg, #ff6b6b, #ffa726);">
+            <i class="fas fa-palette" style="color: white;"></i>
+          </div>
+          <h3 class="item-name">Solar Flare</h3>
+          <div class="item-price">
+            <i class="fas fa-gem"></i> 500 FCoins
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-disabled">
+              <i class="fas fa-gem"></i> Comprar FCoins
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bordes de Avatar -->
+    <div class="tab-content" id="bordersTab">
+      <div class="shop-grid">
+        <div class="shop-item">
+          <div class="item-preview" style="background: var(--gris-oscuro); display: flex; align-items: center; justify-content: center;">
+            <div style="width: 80px; height: 80px; border: 5px solid var(--cyan); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+              <i class="fas fa-user" style="color: var(--cyan); font-size: 30px;"></i>
+            </div>
+          </div>
+          <h3 class="item-name">Borde Cian</h3>
+          <div class="item-price">
+            <i class="fas fa-gem"></i> 200 FCoins
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-primary">
+              <i class="fas fa-shopping-cart"></i> Comprar
+            </button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div class="item-preview" style="background: var(--gris-oscuro); display: flex; align-items: center; justify-content: center;">
+            <div style="width: 80px; height: 80px; border: 5px solid var(--dorado); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+              <i class="fas fa-crown" style="color: var(--dorado); font-size: 30px;"></i>
+            </div>
+          </div>
+          <h3 class="item-name">Borde Dorado</h3>
+          <div class="item-price">
+            <i class="fas fa-gem"></i> 600 FCoins
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-disabled">
+              <i class="fas fa-gem"></i> Comprar FCoins
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fondos -->
+    <div class="tab-content" id="backgroundsTab">
+      <div class="shop-grid">
+        <div class="shop-item">
+          <div class="item-preview" style="background: linear-gradient(45deg, #0d0d0d 25%, #1a1a1a 25%, #1a1a1a 50%, #0d0d0d 50%, #0d0d0d 75%, #1a1a1a 75%); background-size: 20px 20px;">
+            <i class="fas fa-th-large" style="color: var(--cyan);"></i>
+          </div>
+          <h3 class="item-name">Fondo de Red</h3>
+          <div class="item-price">
+            <i class="fas fa-gem"></i> 300 FCoins
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-primary">
+              <i class="fas fa-shopping-cart"></i> Comprar
+            </button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div class="item-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <i class="fas fa-cloud" style="color: white;"></i>
+          </div>
+          <h3 class="item-name">Aurora Digital</h3>
+          <div class="item-price">
+            <i class="fas fa-gem"></i> 450 FCoins
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-primary">
+              <i class="fas fa-shopping-cart"></i> Comprar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cursores -->
+    <div class="tab-content" id="cursorsTab">
+      <div class="shop-grid">
+        <div class="shop-item">
+          <div class="item-preview" style="background: var(--gris-oscuro); display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-mouse-pointer" style="font-size: 50px; color: var(--azul-claro);"></i>
+          </div>
+          <h3 class="item-name">Cursor Hacker</h3>
+          <div class="item-price">
+            <i class="fas fa-gem"></i> 250 FCoins
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-primary">
+              <i class="fas fa-shopping-cart"></i> Comprar
+            </button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div class="item-preview" style="background: var(--gris-oscuro); display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-skull" style="font-size: 50px; color: var(--rojo);"></i>
+          </div>
+          <h3 class="item-name">Cursor Cráneo</h3>
+          <div class="item-price">
+            <i class="fas fa-gem"></i> 400 FCoins
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-disabled">
+              <i class="fas fa-gem"></i> Comprar FCoins
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paquetes FCoins -->
+    <div class="tab-content" id="packagesTab">
+      <div class="packages-grid">
+        <div class="package">
+          <div class="package-coins">
+            <i class="fas fa-gem"></i> 500 FCoins
+          </div>
+          <div class="package-price">$4.99 USD</div>
+          <div class="package-bonus">+0% Bonus</div>
+          <button class="btn btn-primary">
+            <i class="fab fa-bitcoin"></i> Comprar con Bitcoin
+          </button>
+          <div class="bitcoin-info">
+            <i class="fab fa-bitcoin bitcoin-icon"></i>
+            ≈ 0.00012 BTC
+          </div>
+        </div>
+
+        <div class="package popular">
+          <div class="popular-badge">MÁS POPULAR</div>
+          <div class="package-coins">
+            <i class="fas fa-gem"></i> 1,200 FCoins
+          </div>
+          <div class="package-price">$9.99 USD</div>
+          <div class="package-bonus">+20% Bonus</div>
+          <button class="btn btn-secondary">
+            <i class="fab fa-bitcoin"></i> Comprar con Bitcoin
+          </button>
+          <div class="bitcoin-info">
+            <i class="fab fa-bitcoin bitcoin-icon"></i>
+            ≈ 0.00025 BTC
+          </div>
+        </div>
+
+        <div class="package">
+          <div class="package-coins">
+            <i class="fas fa-gem"></i> 2,500 FCoins
+          </div>
+          <div class="package-price">$19.99 USD</div>
+          <div class="package-bonus">+50% Bonus</div>
+          <button class="btn btn-primary">
+            <i class="fab fa-bitcoin"></i> Comprar con Bitcoin
+          </button>
+          <div class="bitcoin-info">
+            <i class="fab fa-bitcoin bitcoin-icon"></i>
+            ≈ 0.00048 BTC
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    
+    // Control del menú desplegable
+    document.getElementById('userAvatar').addEventListener('click', function(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('dropdownMenu');
+      menu.classList.toggle('active');
+    });
+    
+    // Cerrar menú al hacer clic fuera
+    document.addEventListener('click', function() {
+      document.getElementById('dropdownMenu').classList.remove('active');
+    });
+
+    // Cambiar entre pestañas principales
+    document.querySelectorAll('.main-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        
+        // Remover activo de todas las pestañas
+        document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Activar pestaña seleccionada
+        this.classList.add('active');
+        document.getElementById(`${tabId}Tab`).classList.add('active');
+      });
+    });
+
+    // Sistema de compras
+    const userBalance = 850; // Saldo actual del usuario
+    
+    document.querySelectorAll('.btn-primary, .btn-secondary').forEach(btn => {
+      btn.addEventListener('click', function() {
+        if (this.classList.contains('btn-disabled')) {
+          // Redirigir a paquetes FCoins
+          document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          document.querySelector('[data-tab="packages"]').classList.add('active');
+          document.getElementById('packagesTab').classList.add('active');
+          return;
+        }
+        
+        const item = this.closest('.shop-item, .package');
+        const itemName = item?.querySelector('.item-name')?.textContent || 'Producto';
+        
+        if (this.id === 'buyBattlePass') {
+          if (userBalance >= 1200) {
+            alert('¡Pase de Batalla Premium comprado exitosamente!');
+            // Aquí iría la lógica para actualizar el saldo
+          } else {
+            alert('Fondos insuficientes. Necesitas 1,200 FCoins.');
+            // Redirigir a paquetes FCoins
+            document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector('[data-tab="packages"]').classList.add('active');
+            document.getElementById('packagesTab').classList.add('active');
+          }
+        } else {
+          alert(`¡${itemName} comprado exitosamente!`);
+        }
+      });
+    });
+
+    // Vista previa dinámica para paletas de colores
+    document.querySelectorAll('.shop-item').forEach(item => {
+      item.addEventListener('mouseenter', function() {
+        if (this.closest('#palettesTab')) {
+          const preview = this.querySelector('.item-preview');
+          const style = window.getComputedStyle(preview);
+          const background = style.backgroundImage;
+          
+          if (background && background !== 'none') {
+            document.body.style.background = background;
+          }
+        }
+      });
+      
+      item.addEventListener('mouseleave', function() {
+        if (this.closest('#palettesTab')) {
+          document.body.style.background = 'var(--negro)';
+        }
+      });
+    });
+
+    // Simular conversión Bitcoin
+    document.querySelectorAll('.bitcoin-info').forEach(info => {
+      const priceText = info.previousElementSibling.previousElementSibling.textContent;
+      const price = parseFloat(priceText.replace('$', '').replace(' USD', ''));
+      const btcAmount = (price / 42000).toFixed(5); // Suponiendo BTC a $42,000
+      info.querySelector('span')?.remove();
+      const btcSpan = document.createElement('span');
+      btcSpan.textContent = `≈ ${btcAmount} BTC`;
+      info.appendChild(btcSpan);
+    });
+  </script>
+</body>
+</html>

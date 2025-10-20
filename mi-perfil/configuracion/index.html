@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración - HackerX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --azul-claro: #5dade2;
+      --azul-oscuro: #2874a6;
+      --cyan: #00ffff;
+      --verde-oscuro: #229954;
+      --verde-claro: #58d68d;
+      --morado: #9b59b6;
+      --negro: #0d0d0d;
+      --gris-oscuro: #1a1a1a;
+      --rojo: #e74c3c;
+      --naranja: #f39c12;
+    }
+
+    body {
+      background-color: var(--negro);
+      color: #e0e0e0;
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navbar inferior */
+    .navbar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(26, 26, 26, 0.95);
+      display: flex;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 30px;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      z-index: 1000;
+    }
+
+    /* Íconos */
+    .nav-item {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cyan);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      transform: translateY(-5px);
+      color: white;
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+    }
+
+    /* Tooltip (texto flotante) */
+    .nav-item::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: var(--cyan);
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .nav-item:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-5px);
+    }
+
+    /* Contenido principal */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px 100px;
+    }
+
+    /* Encabezado */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .username {
+      font-size: 36px;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--azul-claro), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: var(--azul-claro);
+    }
+
+    /* Sección de configuración */
+    .settings-section {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 20px;
+      padding: 30px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      margin-bottom: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .settings-title {
+      font-size: 32px;
+      background: linear-gradient(135deg, var(--cyan), var(--azul-claro));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 25px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* Lista de configuraciones */
+    .settings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .setting-item {
+      background: linear-gradient(135deg, rgba(40, 116, 166, 0.2), rgba(155, 89, 182, 0.2));
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .setting-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .setting-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .setting-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .setting-info {
+      flex: 1;
+    }
+
+    .setting-title {
+      font-size: 20px;
+      color: var(--cyan);
+      margin-bottom: 5px;
+    }
+
+    .setting-description {
+      font-size: 14px;
+      color: #aaaaaa;
+    }
+
+    .setting-content {
+      margin-top: 15px;
+    }
+
+    /* Formularios */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--azul-claro);
+      font-weight: bold;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 15px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      border-radius: 10px;
+      color: #e0e0e0;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 100px;
+      font-family: "Inter", sans-serif;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--verde-claro), var(--verde-oscuro));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(34, 153, 84, 0.4);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(91, 173, 226, 0.4);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--rojo), #c0392b);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+    }
+
+    /* Código 2FA */
+    .twofa-code {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .code-display {
+      font-family: 'Courier New', monospace;
+      font-size: 24px;
+      letter-spacing: 3px;
+      color: var(--cyan);
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 5px;
+    }
+
+    .code-hint {
+      font-size: 14px;
+      color: #aaaaaa;
+      margin-top: 10px;
+    }
+
+    /* Modal de confirmación */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--gris-oscuro);
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      border: 1px solid rgba(231, 76, 60, 0.5);
+      box-shadow: 0 0 30px rgba(231, 76, 60, 0.3);
+    }
+
+    .modal-title {
+      font-size: 24px;
+      color: var(--rojo);
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .modal-text {
+      color: #e0e0e0;
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .settings-list {
+        gap: 15px;
+      }
+      
+      .setting-item {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        bottom: 10px;
+        padding: 10px 15px;
+      }
+      
+      .container {
+        padding: 20px 15px 100px;
+      }
+      
+      .username {
+        font-size: 28px;
+      }
+      
+      .settings-title {
+        font-size: 26px;
+      }
+      
+      .setting-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+      
+      .form-actions, .modal-actions {
+        flex-direction: column;
+      }
+      
+      .btn {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Contenido principal -->
+  <div class="container">
+    <!-- Encabezado -->
+    <div class="header">
+      <div class="username">@HackerX</div>
+      <div class="subtitle">Configuración de la Cuenta</div>
+    </div>
+    
+    <!-- Sección de configuración -->
+    <div class="settings-section">
+      <h2 class="settings-title">Ajustes de Cuenta</h2>
+      
+      <div class="settings-list">
+        <!-- Cambiar Nickname -->
+        <div class="setting-item">
+          <div class="setting-header">
+            <div class="setting-icon">
+              <i class="fas fa-user-edit"></i>
+            </div>
+            <div class="setting-info">
+              <div class="setting-title">Cambiar Nickname</div>
+              <div class="setting-description">Actualiza tu nombre de usuario visible</div>
+            </div>
+          </div>
+          <div class="setting-content">
+            <div class="form-group">
+              <label class="form-label">Nuevo Nickname</label>
+              <input type="text" class="form-input" value="HackerX" placeholder="Ingresa tu nuevo nickname">
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary">
+                <i class="fas fa-save"></i> Guardar Cambios
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cambiar Biografía -->
+        <div class="setting-item">
+          <div class="setting-header">
+            <div class="setting-icon">
+              <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="setting-info">
+              <div class="setting-title">Cambiar Biografía</div>
+              <div class="setting-description">Actualiza la descripción de tu perfil</div>
+            </div>
+          </div>
+          <div class="setting-content">
+            <div class="form-group">
+              <label class="form-label">Nueva Biografía</label>
+              <textarea class="form-input" placeholder="Describe quién eres y qué haces...">Desarrollador de software y entusiasta de la ciberseguridad. Siempre aprendiendo nuevas tecnologías y compartiendo conocimiento.</textarea>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary">
+                <i class="fas fa-save"></i> Guardar Cambios
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ver Clave 2FA -->
+        <div class="setting-item">
+          <div class="setting-header">
+            <div class="setting-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="setting-info">
+              <div class="setting-title">Ver Clave 2FA</div>
+              <div class="setting-description">Código de autenticación de dos factores</div>
+            </div>
+          </div>
+          <div class="setting-content">
+            <div class="twofa-code">
+              <div class="code-display">JBSW Y3DP EHPK 3PXP</div>
+              <div class="code-hint">
+                <i class="fas fa-exclamation-triangle" style="color: var(--naranja);"></i>
+                Guarda este código en un lugar seguro. Es necesario para recuperar el acceso si pierdes tu dispositivo.
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-secondary">
+                <i class="fas fa-redo"></i> Regenerar Código
+              </button>
+              <button class="btn btn-primary">
+                <i class="fas fa-copy"></i> Copiar al Portapapeles
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cambiar Contraseña -->
+        <div class="setting-item">
+          <div class="setting-header">
+            <div class="setting-icon">
+              <i class="fas fa-key"></i>
+            </div>
+            <div class="setting-info">
+              <div class="setting-title">Cambiar Contraseña</div>
+              <div class="setting-description">Actualiza tu contraseña de acceso</div>
+            </div>
+          </div>
+          <div class="setting-content">
+            <div class="form-group">
+              <label class="form-label">Contraseña Actual</label>
+              <input type="password" class="form-input" placeholder="Ingresa tu contraseña actual">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nueva Contraseña</label>
+              <input type="password" class="form-input" placeholder="Ingresa tu nueva contraseña">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirmar Nueva Contraseña</label>
+              <input type="password" class="form-input" placeholder="Confirma tu nueva contraseña">
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary">
+                <i class="fas fa-save"></i> Cambiar Contraseña
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Eliminar Cuenta -->
+        <div class="setting-item">
+          <div class="setting-header">
+            <div class="setting-icon">
+              <i class="fas fa-trash-alt"></i>
+            </div>
+            <div class="setting-info">
+              <div class="setting-title">Eliminar Cuenta</div>
+              <div class="setting-description">Elimina permanentemente tu cuenta y todos tus datos</div>
+            </div>
+          </div>
+          <div class="setting-content">
+            <div style="padding: 20px; background: rgba(231, 76, 60, 0.1); border-radius: 10px; border: 1px solid rgba(231, 76, 60, 0.3);">
+              <div style="color: var(--rojo); font-weight: bold; margin-bottom: 10px;">
+                <i class="fas fa-exclamation-triangle"></i> Advertencia
+              </div>
+              <div style="color: #e0e0e0; font-size: 14px; line-height: 1.5;">
+                Esta acción no se puede deshacer. Se eliminarán permanentemente todos tus datos, estadísticas, logros y contenido. Tus máquinas completadas, rankings y progreso se perderán para siempre.
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-danger" id="deleteAccountBtn">
+                <i class="fas fa-trash-alt"></i> Eliminar Cuenta Permanentemente
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación para eliminar cuenta -->
+  <div class="modal" id="deleteModal">
+    <div class="modal-content">
+      <div class="modal-title">
+        <i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación
+      </div>
+      <div class="modal-text">
+        ¿Estás absolutamente seguro de que quieres eliminar tu cuenta? Esta acción es <strong>irreversible</strong>. Todos tus datos serán eliminados permanentemente.
+        
+        <div style="margin-top: 15px; padding: 10px; background: rgba(231, 76, 60, 0.2); border-radius: 5px;">
+          <strong>Para confirmar, escribe "ELIMINAR" en el siguiente campo:</strong>
+          <input type="text" id="confirmDeleteInput" class="form-input" style="margin-top: 10px;" placeholder="Escribe ELIMINAR para confirmar">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelDelete">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button class="btn btn-danger" id="confirmDelete" disabled>
+          <i class="fas fa-trash-alt"></i> Eliminar Cuenta
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navbar inferior -->
+  <nav class="navbar">
+    <div class="nav-item" data-label="Casa"><i data-lucide="home"></i></div>
+    <div class="nav-item" data-label="Resumen"><i data-lucide="user"></i></div>
+    <div class="nav-item" data-label="Social"><i data-lucide="users"></i></div>
+    <div class="nav-item" data-label="Competitivo"><i data-lucide="trophy"></i></div>
+    <div class="nav-item" data-label="Galería"><i data-lucide="image"></i></div>
+    <div class="nav-item" data-label="Stories"><i data-lucide="plus-circle"></i></div>
+    <div class="nav-item" data-label="Personalización"><i data-lucide="palette"></i></div>
+    <div class="nav-item" data-label="Privacidad"><i data-lucide="lock"></i></div>
+    <div class="nav-item active" data-label="Configuración"><i data-lucide="settings"></i></div>
+  </nav>
+
+  <script>
+    lucide.createIcons();
+    
+    // Destacar el elemento activo en la navbar
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      item.addEventListener('click', function() {
+        navItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Modal de eliminación de cuenta
+    const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+    const deleteModal = document.getElementById('deleteModal');
+    const cancelDelete = document.getElementById('cancelDelete');
+    const confirmDelete = document.getElementById('confirmDelete');
+    const confirmDeleteInput = document.getElementById('confirmDeleteInput');
+
+    deleteAccountBtn.addEventListener('click', function() {
+      deleteModal.classList.add('active');
+    });
+
+    cancelDelete.addEventListener('click', function() {
+      deleteModal.classList.remove('active');
+      confirmDeleteInput.value = '';
+      confirmDelete.disabled = true;
+    });
+
+    confirmDeleteInput.addEventListener('input', function() {
+      confirmDelete.disabled = this.value !== 'ELIMINAR';
+    });
+
+    confirmDelete.addEventListener('click', function() {
+      if (confirmDeleteInput.value === 'ELIMINAR') {
+        alert('Cuenta eliminada exitosamente (simulación)');
+        deleteModal.classList.remove('active');
+        confirmDeleteInput.value = '';
+        confirmDelete.disabled = true;
+      }
+    });
+
+    // Copiar código 2FA al portapapeles
+    const copy2FABtn = document.querySelector('.btn-primary:nth-child(2)');
+    copy2FABtn.addEventListener('click', function() {
+      const code = document.querySelector('.code-display').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+        setTimeout(() => {
+          this.innerHTML = originalText;
+        }, 2000);
+      });
+    });
+
+    // Validación de formularios
+    const saveButtons = document.querySelectorAll('.btn-primary:not(:nth-child(2))');
+    saveButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const settingItem = this.closest('.setting-item');
+        const settingTitle = settingItem.querySelector('.setting-title').textContent;
+        
+        // Simular guardado exitoso
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-check"></i> Guardado!';
+        this.style.background = 'linear-gradient(135deg, var(--verde-claro), var(--verde-oscuro))';
+        
+        setTimeout(() => {
+          this.innerHTML = originalText;
+        }, 2000);
+      });
+    });
+
+    // Regenerar código 2FA
+    const regenerate2FABtn = document.querySelector('.btn-secondary');
+    regenerate2FABtn.addEventListener('click', function() {
+      if (confirm('¿Estás seguro de que quieres regenerar el código 2FA? El código anterior dejará de funcionar.')) {
+        // Simular regeneración
+        const newCode = generate2FACode();
+        document.querySelector('.code-display').textContent = newCode;
+        
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-check"></i> Regenerado!';
+        setTimeout(() => {
+          this.innerHTML = originalText;
+        }, 2000);
+      }
+    });
+
+    // Función para generar código 2FA simulado
+    function generate2FACode() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+      let code = '';
+      for (let i = 0; i < 16; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+        if ((i + 1) % 4 === 0 && i < 15) {
+          code += ' ';
+        }
+      }
+      return code;
+    }
+  </script>
+</body>
+</html>

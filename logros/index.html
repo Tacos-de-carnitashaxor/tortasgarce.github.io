@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logros - HackerX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --azul-claro: #5dade2;
+      --azul-oscuro: #2874a6;
+      --cyan: #00ffff;
+      --verde-oscuro: #229954;
+      --verde-claro: #58d68d;
+      --morado: #9b59b6;
+      --negro: #0d0d0d;
+      --gris-oscuro: #1a1a1a;
+      --rojo: #e74c3c;
+      --naranja: #f39c12;
+      --amarillo: #f1c40f;
+      --dorado: #ffd700;
+      --plateado: #c0c0c0;
+      --bronce: #cd7f32;
+    }
+
+    body {
+      background-color: var(--negro);
+      color: #e0e0e0;
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navbar superior */
+    .navbar {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20, 20, 20, 0.9);
+      display: flex;
+      gap: 14px;
+      padding: 10px 18px;
+      border-radius: 30px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.2);
+      border: 1px solid rgba(0,255,255,0.2);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      z-index: 1000;
+    }
+
+    /* Logo de la web */
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: cyan;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .logo:hover {
+      background-color: rgba(0,255,255,0.15);
+    }
+
+    /* Íconos */
+    .nav-item {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: cyan;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background-color: rgba(0,255,255,0.15);
+      transform: translateY(-3px);
+    }
+
+    .nav-item.active {
+      background-color: rgba(0,255,255,0.2);
+    }
+
+    /* Tooltip (texto flotante) */
+    .nav-item::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: #00ffff;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .nav-item:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(5px);
+    }
+
+    /* Perfil de usuario */
+    .user-profile {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .user-profile:hover {
+      background-color: rgba(0,255,255,0.15);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid rgba(0,255,255,0.5);
+    }
+
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Menú desplegable */
+    .dropdown-menu {
+      position: absolute;
+      top: 55px;
+      right: 0;
+      background: rgba(20, 20, 20, 0.95);
+      border-radius: 12px;
+      padding: 8px 0;
+      min-width: 200px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,255,255,0.2);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .dropdown-menu.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      color: #e0e0e0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .menu-item:hover {
+      background-color: rgba(0,255,255,0.1);
+      color: cyan;
+    }
+
+    .menu-item i {
+      width: 18px;
+      height: 18px;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background: rgba(0,255,255,0.2);
+      margin: 8px 0;
+    }
+
+    /* Contenido principal */
+    .container {
+      max-width: 1200px;
+      margin: 100px auto 40px;
+      padding: 0 20px;
+    }
+
+    /* Pestañas principales */
+    .main-tabs {
+      display: flex;
+      gap: 0;
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 5px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      overflow-x: auto;
+    }
+
+    .main-tab {
+      flex: 1;
+      padding: 15px 20px;
+      background: transparent;
+      border: none;
+      color: #aaaaaa;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 10px;
+      text-align: center;
+      white-space: nowrap;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .main-tab.active {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+    }
+
+    /* Contenido de pestañas */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Estadísticas generales */
+    .stats-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--cyan);
+    }
+
+    .stat-icon {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--cyan);
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #aaaaaa;
+      font-size: 14px;
+    }
+
+    /* Grid de logros */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .achievement-card {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .achievement-card.unlocked {
+      border-color: var(--verde-claro);
+      box-shadow: 0 0 20px rgba(88, 214, 141, 0.2);
+    }
+
+    .achievement-card.locked {
+      opacity: 0.7;
+      filter: grayscale(0.8);
+    }
+
+    .achievement-card.evolving {
+      border-color: var(--dorado);
+    }
+
+    .achievement-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .achievement-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .achievement-icon.badge {
+      background: linear-gradient(135deg, var(--azul-claro), var(--morado));
+      color: white;
+    }
+
+    .achievement-icon.trophy {
+      background: linear-gradient(135deg, var(--dorado), #ffed4e);
+      color: var(--negro);
+    }
+
+    .achievement-icon.trophy.bronze {
+      background: linear-gradient(135deg, var(--bronce), #e67e22);
+      color: white;
+    }
+
+    .achievement-icon.trophy.silver {
+      background: linear-gradient(135deg, var(--plateado), #bdc3c7);
+      color: var(--negro);
+    }
+
+    .achievement-info {
+      flex: 1;
+    }
+
+    .achievement-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--cyan);
+      margin-bottom: 5px;
+    }
+
+    .achievement-description {
+      color: #aaaaaa;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .achievement-progress {
+      margin-top: 15px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--verde-claro), var(--verde-oscuro));
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+
+    .achievement-reward {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(255, 215, 0, 0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .reward-icon {
+      color: var(--dorado);
+    }
+
+    .reward-text {
+      font-size: 14px;
+      color: var(--dorado);
+      font-weight: bold;
+    }
+
+    .evolution-stages {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .evolution-stage {
+      flex: 1;
+      text-align: center;
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .evolution-stage.active {
+      border-color: var(--cyan);
+      background: rgba(91, 173, 226, 0.1);
+    }
+
+    .evolution-stage.completed {
+      border-color: var(--verde-claro);
+      background: rgba(88, 214, 141, 0.1);
+    }
+
+    .stage-level {
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+
+    .stage-reward {
+      font-size: 10px;
+      color: #aaaaaa;
+    }
+
+    /* Recompensas Diarias */
+    .daily-rewards {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      color: var(--cyan);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .rewards-calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .reward-day {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+      padding: 20px 10px;
+      text-align: center;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .reward-day.available {
+      border-color: var(--verde-claro);
+      cursor: pointer;
+    }
+
+    .reward-day.available:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(88, 214, 141, 0.3);
+    }
+
+    .reward-day.claimed {
+      border-color: var(--dorado);
+      background: rgba(255, 215, 0, 0.1);
+    }
+
+    .reward-day.locked {
+      opacity: 0.5;
+      filter: grayscale(0.8);
+    }
+
+    .day-number {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .day-reward {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .day-amount {
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+
+    .claim-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--rojo);
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .streak-info {
+      text-align: center;
+      padding: 15px;
+      background: rgba(255, 215, 0, 0.1);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .streak-count {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--dorado);
+      margin-bottom: 5px;
+    }
+
+    .streak-label {
+      font-size: 14px;
+      color: #aaaaaa;
+    }
+
+    /* Recompensas de Temporada */
+    .season-rewards {
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(91, 173, 226, 0.3);
+    }
+
+    .season-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .season-title {
+      font-size: 28px;
+      color: var(--cyan);
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--cyan), var(--azul-claro));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .season-time {
+      color: #aaaaaa;
+      margin-bottom: 15px;
+    }
+
+    .season-progress {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 25px;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .season-level {
+      font-weight: bold;
+      color: var(--cyan);
+    }
+
+    .season-rewards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .season-reward {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .season-reward.unlocked {
+      border-color: var(--verde-claro);
+    }
+
+    .season-reward.locked {
+      opacity: 0.6;
+    }
+
+    .season-reward.current {
+      border-color: var(--cyan);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    }
+
+    .reward-level {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .season-reward-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .season-reward-name {
+      font-size: 14px;
+      color: #e0e0e0;
+      margin-bottom: 5px;
+    }
+
+    .season-reward-desc {
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .achievements-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+      
+      .rewards-calendar {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .season-rewards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        gap: 10px;
+        padding: 8px 14px;
+      }
+      
+      .nav-item {
+        width: 36px;
+        height: 36px;
+      }
+      
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .container {
+        margin-top: 80px;
+      }
+      
+      .main-tabs {
+        flex-direction: column;
+      }
+      
+      .stats-overview {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .stats-overview {
+        grid-template-columns: 1fr;
+      }
+      
+      .rewards-calendar {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .achievement-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .evolution-stages {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar superior -->
+  <nav class="navbar">
+    <!-- Logo de la web -->
+    <div class="logo">
+      <i data-lucide="globe"></i>
+    </div>
+    
+    <!-- Elementos de navegación -->
+    <div class="nav-item" data-label="Home"><i data-lucide="home"></i></div>
+    <div class="nav-item" data-label="Privado"><i data-lucide="message-square"></i></div>
+    <div class="nav-item" data-label="Equipos"><i data-lucide="users"></i></div>
+    <div class="nav-item" data-label="Flag Ground"><i data-lucide="flag"></i></div>
+    <div class="nav-item" data-label="Clasificatoria"><i data-lucide="trophy"></i></div>
+    <div class="nav-item" data-label="Tienda"><i data-lucide="shopping-bag"></i></div>
+    <div class="nav-item active" data-label="Logros"><i data-lucide="award"></i></div>
+    
+    <!-- Perfil de usuario -->
+    <div class="user-profile">
+      <div class="user-avatar" id="userAvatar">
+        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Foto de perfil">
+      </div>
+      
+      <!-- Menú desplegable -->
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="menu-item">
+          <i data-lucide="user"></i>
+          <span>Perfil</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="bell"></i>
+          <span>Notificaciones</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="eye"></i>
+          <span>Vista previa</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="award"></i>
+          <span>Logros</span>
+        </div>
+        <div class="menu-item">
+          <i data-lucide="download"></i>
+          <span>Descargar VPN</span>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-item">
+          <i data-lucide="log-out"></i>
+          <span>Cerrar sesión</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container">
+    <!-- Estadísticas generales -->
+    <div class="stats-overview">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-shield-alt" style="color: var(--azul-claro);"></i>
+        </div>
+        <div class="stat-value">42</div>
+        <div class="stat-label">Insignias Obtenidas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-trophy" style="color: var(--dorado);"></i>
+        </div>
+        <div class="stat-value">18</div>
+        <div class="stat-label">Trofeos Desbloqueados</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-calendar-check" style="color: var(--verde-claro);"></i>
+        </div>
+        <div class="stat-value">7</div>
+        <div class="stat-label">Días Consecutivos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-star" style="color: var(--naranja);"></i>
+        </div>
+        <div class="stat-value">89%</div>
+        <div class="stat-label">Progreso Temporada</div>
+      </div>
+    </div>
+
+    <!-- Pestañas principales -->
+    <div class="main-tabs">
+      <button class="main-tab active" data-tab="badges">Insignias</button>
+      <button class="main-tab" data-tab="trophies">Trofeos</button>
+      <button class="main-tab" data-tab="daily">Recompensas Diarias</button>
+      <button class="main-tab" data-tab="season">Recompensas de Temporada</button>
+    </div>
+
+    <!-- Insignias -->
+    <div class="tab-content active" id="badgesTab">
+      <div class="achievements-grid">
+        <!-- Insignia 1 -->
+        <div class="achievement-card unlocked">
+          <div class="achievement-header">
+            <div class="achievement-icon badge">
+              <i class="fas fa-code"></i>
+            </div>
+            <div class="achievement-info">
+              <div class="achievement-name">Maestro del Web Hacking</div>
+              <div class="achievement-description">Completa 50 retos de Web Hacking</div>
+            </div>
+          </div>
+          <div class="achievement-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 100%"></div>
+            </div>
+            <div class="progress-text">
+              <span>50/50 completados</span>
+              <span>100%</span>
+            </div>
+          </div>
+          <div class="achievement-reward">
+            <i class="fas fa-gem reward-icon"></i>
+            <span class="reward-text">+500 FCoins + Insignia Exclusiva</span>
+          </div>
+        </div>
+
+        <!-- Insignia 2 -->
+        <div class="achievement-card evolving">
+          <div class="achievement-header">
+            <div class="achievement-icon badge">
+              <i class="fas fa-network-wired"></i>
+            </div>
+            <div class="achievement-info">
+              <div class="achievement-name">Network Warrior</div>
+              <div class="achievement-description">Evoluciona tu habilidad en Network Hacking</div>
+            </div>
+          </div>
+          <div class="evolution-stages">
+            <div class="evolution-stage completed">
+              <div class="stage-level">Nivel 1</div>
+              <div class="stage-reward">10 retos</div>
+            </div>
+            <div class="evolution-stage active">
+              <div class="stage-level">Nivel 2</div>
+              <div class="stage-reward">25 retos</div>
+            </div>
+            <div class="evolution-stage">
+              <div class="stage-level">Nivel 3</div>
+              <div class="stage-reward">50 retos</div>
+            </div>
+          </div>
+          <div class="achievement-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 60%"></div>
+            </div>
+            <div class="progress-text">
+              <span>15/25 completados</span>
+              <span>60%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insignia 3 -->
+        <div class="achievement-card locked">
+          <div class="achievement-header">
+            <div class="achievement-icon badge">
+              <i class="fas fa-user-secret"></i>
+            </div>
+            <div class="achievement-info">
+              <div class="achievement-name">Fantasma Digital</div>
+              <div class="achievement-description">Completa 10 máquinas sin ser detectado</div>
+            </div>
+          </div>
+          <div class="achievement-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 30%"></div>
+            </div>
+            <div class="progress-text">
+              <span>3/10 completadas</span>
+              <span>30%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trofeos -->
+    <div class="tab-content" id="trophiesTab">
+      <div class="achievements-grid">
+        <!-- Trofeo 1 -->
+        <div class="achievement-card unlocked">
+          <div class="achievement-header">
+            <div class="achievement-icon trophy bronze">
+              <i class="fas fa-crown"></i>
+            </div>
+            <div class="achievement-info">
+              <div class="achievement-name">Primera Sangre</div>
+              <div class="achievement-description">Sé el primero en completar un CTF</div>
+            </div>
+          </div>
+          <div class="achievement-reward">
+            <i class="fas fa-gem reward-icon"></i>
+            <span class="reward-text">+200 FCoins + Trofeo Bronce</span>
+          </div>
+        </div>
+
+        <!-- Trofeo 2 -->
+        <div class="achievement-card evolving unlocked">
+          <div class="achievement-header">
+            <div class="achievement-icon trophy silver">
+              <i class="fas fa-bug"></i>
+            </div>
+            <div class="achievement-info">
+              <div class="achievement-name">Cazador de Vulnerabilidades</div>
+              <div class="achievement-description">Encuentra y explota vulnerabilidades críticas</div>
+            </div>
+          </div>
+          <div class="evolution-stages">
+            <div class="evolution-stage completed">
+              <div class="stage-level">Nivel 1</div>
+              <div class="stage-reward">5 vulnerabilidades</div>
+            </div>
+            <div class="evolution-stage completed">
+              <div class="stage-level">Nivel 2</div>
+              <div class="stage-reward">15 vulnerabilidades</div>
+            </div>
+            <div class="evolution-stage active">
+              <div class="stage-level">Nivel 3</div>
+              <div class="stage-reward">30 vulnerabilidades</div>
+            </div>
+          </div>
+          <div class="achievement-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 70%"></div>
+            </div>
+            <div class="progress-text">
+              <span>21/30 encontradas</span>
+              <span>70%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trofeo 3 -->
+        <div class="achievement-card locked">
+          <div class="achievement-header">
+            <div class="achievement-icon trophy">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="achievement-info">
+              <div class="achievement-name">Líder de Equipo</div>
+              <div class="achievement-description">Lleva a tu equipo al top 3 en un CTF</div>
+            </div>
+          </div>
+          <div class="achievement-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="progress-text">
+              <span>0/1 completado</span>
+              <span>0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recompensas Diarias -->
+    <div class="tab-content" id="dailyTab">
+      <div class="daily-rewards">
+        <h2 class="section-title">Recompensas Diarias</h2>
+        
+        <div class="rewards-calendar">
+          <!-- Día 1 -->
+          <div class="reward-day claimed">
+            <div class="day-number">Día 1</div>
+            <div class="day-reward">
+              <i class="fas fa-gem" style="color: var(--amarillo);"></i>
+            </div>
+            <div class="day-amount">50 FCoins</div>
+          </div>
+
+          <!-- Día 2 -->
+          <div class="reward-day claimed">
+            <div class="day-number">Día 2</div>
+            <div class="day-reward">
+              <i class="fas fa-bolt" style="color: var(--naranja);"></i>
+            </div>
+            <div class="day-amount">2x XP 1h</div>
+          </div>
+
+          <!-- Día 3 -->
+          <div class="reward-day claimed">
+            <div class="day-number">Día 3</div>
+            <div class="day-reward">
+              <i class="fas fa-gem" style="color: var(--amarillo);"></i>
+            </div>
+            <div class="day-amount">75 FCoins</div>
+          </div>
+
+          <!-- Día 4 -->
+          <div class="reward-day claimed">
+            <div class="day-number">Día 4</div>
+            <div class="day-reward">
+              <i class="fas fa-shield-alt" style="color: var(--azul-claro);"></i>
+            </div>
+            <div class="day-amount">Borde Avatar</div>
+          </div>
+
+          <!-- Día 5 -->
+          <div class="reward-day claimed">
+            <div class="day-number">Día 5</div>
+            <div class="day-reward">
+              <i class="fas fa-gem" style="color: var(--amarillo);"></i>
+            </div>
+            <div class="day-amount">100 FCoins</div>
+          </div>
+
+          <!-- Día 6 -->
+          <div class="reward-day claimed">
+            <div class="day-number">Día 6</div>
+            <div class="day-reward">
+              <i class="fas fa-bolt" style="color: var(--naranja);"></i>
+            </div>
+            <div class="day-amount">2x XP 2h</div>
+          </div>
+
+          <!-- Día 7 -->
+          <div class="reward-day available">
+            <div class="day-number">Día 7</div>
+            <div class="day-reward">
+              <i class="fas fa-gem" style="color: var(--dorado);"></i>
+            </div>
+            <div class="day-amount">200 FCoins</div>
+            <div class="claim-badge">!</div>
+          </div>
+        </div>
+
+        <div class="streak-info">
+          <div class="streak-count">Racha de 7 días</div>
+          <div class="streak-label">¡Sigue así para mejores recompensas!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recompensas de Temporada -->
+    <div class="tab-content" id="seasonTab">
+      <div class="season-rewards">
+        <div class="season-header">
+          <h2 class="season-title">Temporada 5 - Cyber Invasion</h2>
+          <div class="season-time">Termina en: 15 días 8 horas</div>
+        </div>
+
+        <div class="season-progress">
+          <div class="progress-info">
+            <div class="season-level">Nivel 24/30</div>
+            <div>89% completado</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 89%"></div>
+          </div>
+        </div>
+
+        <div class="season-rewards-grid">
+          <!-- Nivel 5 -->
+          <div class="season-reward unlocked">
+            <div class="reward-level">Nivel 5</div>
+            <div class="season-reward-icon">
+              <i class="fas fa-palette" style="color: var(--azul-claro);"></i>
+            </div>
+            <div class="season-reward-name">Paleta Cyber</div>
+            <div class="season-reward-desc">Desbloqueada</div>
+          </div>
+
+          <!-- Nivel 10 -->
+          <div class="season-reward unlocked">
+            <div class="reward-level">Nivel 10</div>
+            <div class="season-reward-icon">
+              <i class="fas fa-mouse-pointer" style="color: var(--morado);"></i>
+            </div>
+            <div class="season-reward-name">Cursor Hacker</div>
+            <div class="season-reward-desc">Desbloqueado</div>
+          </div>
+
+          <!-- Nivel 15 -->
+          <div class="season-reward unlocked">
+            <div class="reward-level">Nivel 15</div>
+            <div class="season-reward-icon">
+              <i class="fas fa-shield-alt" style="color: var(--dorado);"></i>
+            </div>
+            <div class="season-reward-name">Insignia Élite</div>
+            <div class="season-reward-desc">Desbloqueada</div>
+          </div>
+
+          <!-- Nivel 20 -->
+          <div class="season-reward unlocked">
+            <div class="reward-level">Nivel 20</div>
+            <div class="season-reward-icon">
+              <i class="fas fa-trophy" style="color: var(--dorado);"></i>
+            </div>
+            <div class="season-reward-name">Trofeo Plata</div>
+            <div class="season-reward-desc">Desbloqueado</div>
+          </div>
+
+          <!-- Nivel 25 -->
+          <div class="season-reward current">
+            <div class="reward-level">Nivel 25</div>
+            <div class="season-reward-icon">
+              <i class="fas fa-gem" style="color: var(--amarillo);"></i>
+            </div>
+            <div class="season-reward-name">500 FCoins</div>
+            <div class="season-reward-desc">Próxima recompensa</div>
+          </div>
+
+          <!-- Nivel 30 -->
+          <div class="season-reward locked">
+            <div class="reward-level">Nivel 30</div>
+            <div class="season-reward-icon">
+              <i class="fas fa-crown" style="color: var(--dorado);"></i>
+            </div>
+            <div class="season-reward-name">Trofeo Élite</div>
+            <div class="season-reward-desc">Recompensa final</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    
+    // Control del menú desplegable
+    document.getElementById('userAvatar').addEventListener('click', function(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('dropdownMenu');
+      menu.classList.toggle('active');
+    });
+    
+    // Cerrar menú al hacer clic fuera
+    document.addEventListener('click', function() {
+      document.getElementById('dropdownMenu').classList.remove('active');
+    });
+
+    // Cambiar entre pestañas principales
+    document.querySelectorAll('.main-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        
+        // Remover activo de todas las pestañas
+        document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Activar pestaña seleccionada
+        this.classList.add('active');
+        document.getElementById(`${tabId}Tab`).classList.add('active');
+      });
+    });
+
+    // Sistema de reclamar recompensas diarias
+    document.querySelectorAll('.reward-day.available').forEach(day => {
+      day.addEventListener('click', function() {
+        const reward = this.querySelector('.day-amount').textContent;
+        alert(`¡Recompensa reclamada! Has obtenido: ${reward}`);
+        this.classList.remove('available');
+        this.classList.add('claimed');
+        this.querySelector('.claim-badge')?.remove();
+        
+        // Actualizar racha
+        const streakCount = document.querySelector('.streak-count');
+        const currentStreak = parseInt(streakCount.textContent.match(/\d+/)[0]);
+        streakCount.textContent = `Racha de ${currentStreak + 1} días`;
+      });
+    });
+
+    // Animaciones para logros
+    document.querySelectorAll('.achievement-card').forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        if (this.classList.contains('unlocked')) {
+          this.style.transform = 'translateY(-5px)';
+          this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.4)';
+        }
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = 'none';
+      });
+    });
+
+    // Simular progreso de evolución
+    const evolvingCards = document.querySelectorAll('.achievement-card.evolving');
+    evolvingCards.forEach(card => {
+      const progressFill = card.querySelector('.progress-fill');
+      const progressText = card.querySelector('.progress-text span:first-child');
+      
+      // Simular progreso aleatorio para demostración
+      const randomProgress = Math.floor(Math.random() * 30) + 70;
+      progressFill.style.width = `${randomProgress}%`;
+      progressText.textContent = progressText.textContent.replace(/\d+\/\d+/, `${Math.floor(randomProgress/100 * 25)}/25`);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galería - Mi Perfil</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Estilos generales */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #0f0f23;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #2a2a4a;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #6c63ff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .back-btn:hover {
+      color: #8a84ff;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    /* Controles de galería */
+    .gallery-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 10px;
+    }
+
+    .filter-tab {
+      padding: 8px 16px;
+      background: #1a1a2e;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+
+    .filter-tab.active {
+      background: #6c63ff;
+      color: white;
+    }
+
+    .upload-btn {
+      background: #6c63ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+
+    .upload-btn:hover {
+      background: #5a52d5;
+    }
+
+    /* Grid de galería */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 40px;
+    }
+
+    .gallery-item {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      background: #1a1a2e;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .gallery-item img,
+    .gallery-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .item-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .gallery-item:hover .item-overlay {
+      opacity: 1;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .delete-btn {
+      color: #ff6b6b;
+    }
+
+    .video-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Modal de subida */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: #1a1a2e;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .close-modal {
+      font-size: 24px;
+      cursor: pointer;
+      color: #aaa;
+      transition: color 0.3s;
+    }
+
+    .close-modal:hover {
+      color: #fff;
+    }
+
+    .upload-area {
+      border: 2px dashed #6c63ff;
+      border-radius: 8px;
+      padding: 40px 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .upload-area:hover {
+      background: rgba(108, 99, 255, 0.1);
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      color: #6c63ff;
+      margin-bottom: 15px;
+    }
+
+    .upload-text {
+      margin-bottom: 10px;
+    }
+
+    .upload-hint {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .preview-container {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .preview-title {
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .preview-item {
+      position: relative;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .preview-item img,
+    .preview-item video {
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      background: #0f0f23;
+    }
+
+    .remove-preview {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .cancel-btn {
+      background: #2a2a4a;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .cancel-btn:hover {
+      background: #3a3a5a;
+    }
+
+    .confirm-btn {
+      background: #6c63ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .confirm-btn:hover {
+      background: #5a52d5;
+    }
+
+    /* Modal de visualización */
+    .view-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .view-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .view-modal-content {
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+    }
+
+    .view-modal-content img,
+    .view-modal-content video {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 8px;
+    }
+
+    .modal-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+      padding: 0 20px;
+    }
+
+    .nav-arrow {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 24px;
+      transition: background 0.3s;
+    }
+
+    .nav-arrow:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .view-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0.5);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Estados vacíos */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #aaa;
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      color: #2a2a4a;
+    }
+
+    .empty-text {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .empty-hint {
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+      
+      .gallery-controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i>
+        Volver al perfil
+      </a>
+      <h1 class="page-title">Galería</h1>
+    </div>
+
+    <!-- Controles de galería -->
+    <div class="gallery-controls">
+      <div class="filter-tabs">
+        <div class="filter-tab active" data-filter="all">Todo</div>
+        <div class="filter-tab" data-filter="image">Imágenes</div>
+        <div class="filter-tab" data-filter="video">Videos</div>
+      </div>
+      <button class="upload-btn" id="uploadBtn">
+        <i class="fas fa-plus"></i>
+        Subir contenido
+      </button>
+    </div>
+
+    <!-- Grid de galería -->
+    <div class="gallery-grid" id="galleryGrid">
+      <!-- Los elementos de la galería se generarán dinámicamente -->
+    </div>
+
+    <!-- Estado vacío (se muestra cuando no hay elementos) -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <div class="empty-icon">
+        <i class="fas fa-images"></i>
+      </div>
+      <div class="empty-text">Tu galería está vacía</div>
+      <div class="empty-hint">Sube tu primera imagen o video haciendo clic en el botón "Subir contenido"</div>
+    </div>
+  </div>
+
+  <!-- Modal de subida -->
+  <div class="modal" id="uploadModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Subir contenido</h2>
+        <div class="close-modal" id="closeUploadModal">&times;</div>
+      </div>
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">
+          <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        <div class="upload-text">Arrastra archivos aquí o haz clic para seleccionar</div>
+        <div class="upload-hint">Se admiten imágenes (JPG, PNG) y videos (MP4, WebM)</div>
+        <input type="file" id="fileInput" class="file-input" multiple accept="image/*,video/*">
+      </div>
+      <div class="preview-container" id="previewContainer">
+        <div class="preview-title">Vista previa:</div>
+        <div class="preview-list" id="previewList"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="cancel-btn" id="cancelUpload">Cancelar</button>
+        <button class="confirm-btn" id="confirmUpload">Subir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de visualización -->
+  <div class="view-modal" id="viewModal">
+    <div class="view-modal-close" id="closeViewModal">&times;</div>
+    <div class="modal-nav">
+      <div class="nav-arrow" id="prevItem">&#10094;</div>
+      <div class="nav-arrow" id="nextItem">&#10095;</div>
+    </div>
+    <div class="view-modal-content" id="viewModalContent">
+      <!-- El contenido se carga dinámicamente -->
+    </div>
+  </div>
+
+  <script>
+    // Datos de ejemplo para la galería
+    let galleryItems = [
+      { id: 1, type: 'image', url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', thumbnail: null },
+      { id: 2, type: 'image', url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', thumbnail: null },
+      { id: 3, type: 'video', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', thumbnail: 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+      { id: 4, type: 'image', url: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', thumbnail: null },
+      { id: 5, type: 'video', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', thumbnail: 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' },
+      { id: 6, type: 'image', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', thumbnail: null }
+    ];
+
+    // Elementos del DOM
+    const galleryGrid = document.getElementById('galleryGrid');
+    const emptyState = document.getElementById('emptyState');
+    const uploadModal = document.getElementById('uploadModal');
+    const viewModal = document.getElementById('viewModal');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const closeUploadModal = document.getElementById('closeUploadModal');
+    const cancelUpload = document.getElementById('cancelUpload');
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewList = document.getElementById('previewList');
+    const confirmUpload = document.getElementById('confirmUpload');
+    const closeViewModal = document.getElementById('closeViewModal');
+    const viewModalContent = document.getElementById('viewModalContent');
+    const prevItem = document.getElementById('prevItem');
+    const nextItem = document.getElementById('nextItem');
+    const filterTabs = document.querySelectorAll('.filter-tab');
+
+    // Variables de estado
+    let currentFilter = 'all';
+    let currentViewIndex = 0;
+    let filesToUpload = [];
+
+    // Inicializar la galería
+    function initGallery() {
+      renderGallery();
+      setupEventListeners();
+    }
+
+    // Renderizar la galería
+    function renderGallery() {
+      galleryGrid.innerHTML = '';
+      
+      const filteredItems = galleryItems.filter(item => {
+        if (currentFilter === 'all') return true;
+        return item.type === currentFilter;
+      });
+      
+      if (filteredItems.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      
+      filteredItems.forEach((item, index) => {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item';
+        galleryItem.dataset.id = item.id;
+        
+        if (item.type === 'image') {
+          galleryItem.innerHTML = `
+            <img src="${item.url}" alt="Imagen de galería">
+            <div class="item-overlay">
+              <div class="item-actions">
+                <div class="action-btn view-btn" title="Ver">
+                  <i class="fas fa-eye"></i>
+                </div>
+                <div class="action-btn delete-btn" title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          galleryItem.innerHTML = `
+            <img src="${item.thumbnail}" alt="Miniatura de video">
+            <div class="video-indicator">
+              <i class="fas fa-play"></i>
+              Video
+            </div>
+            <div class="item-overlay">
+              <div class="item-actions">
+                <div class="action-btn view-btn" title="Ver">
+                  <i class="fas fa-eye"></i>
+                </div>
+                <div class="action-btn delete-btn" title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+        
+        galleryGrid.appendChild(galleryItem);
+        
+        // Agregar eventos a los botones
+        const viewBtn = galleryItem.querySelector('.view-btn');
+        const deleteBtn = galleryItem.querySelector('.delete-btn');
+        
+        viewBtn.addEventListener('click', () => openViewModal(index, filteredItems));
+        deleteBtn.addEventListener('click', () => deleteItem(item.id));
+      });
+    }
+
+    // Configurar event listeners
+    function setupEventListeners() {
+      // Filtros
+      filterTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          filterTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentFilter = tab.dataset.filter;
+          renderGallery();
+        });
+      });
+      
+      // Modal de subida
+      uploadBtn.addEventListener('click', () => uploadModal.classList.add('active'));
+      closeUploadModal.addEventListener('click', closeUploadModalFunc);
+      cancelUpload.addEventListener('click', closeUploadModalFunc);
+      
+      // Área de subida
+      uploadArea.addEventListener('click', () => fileInput.click());
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.background = 'rgba(108, 99, 255, 0.1)';
+      });
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.background = '';
+      });
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.background = '';
+        handleFiles(e.dataTransfer.files);
+      });
+      
+      fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+      
+      // Confirmar subida
+      confirmUpload.addEventListener('click', uploadFiles);
+      
+      // Modal de visualización
+      closeViewModal.addEventListener('click', closeViewModalFunc);
+      prevItem.addEventListener('click', showPrevItem);
+      nextItem.addEventListener('click', showNextItem);
+      
+      // Cerrar modales al hacer clic fuera
+      uploadModal.addEventListener('click', (e) => {
+        if (e.target === uploadModal) closeUploadModalFunc();
+      });
+      
+      viewModal.addEventListener('click', (e) => {
+        if (e.target === viewModal) closeViewModalFunc();
+      });
+    }
+
+    // Manejar archivos seleccionados
+    function handleFiles(fileList) {
+      filesToUpload = Array.from(fileList);
+      previewList.innerHTML = '';
+      
+      if (filesToUpload.length === 0) {
+        previewContainer.style.display = 'none';
+        return;
+      }
+      
+      previewContainer.style.display = 'block';
+      
+      filesToUpload.forEach((file, index) => {
+        const previewItem = document.createElement('div');
+        previewItem.className = 'preview-item';
+        
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          if (file.type.startsWith('image/')) {
+            previewItem.innerHTML = `
+              <img src="${e.target.result}" alt="Vista previa">
+              <div class="remove-preview" data-index="${index}">&times;</div>
+            `;
+          } else if (file.type.startsWith('video/')) {
+            previewItem.innerHTML = `
+              <video controls>
+                <source src="${e.target.result}" type="${file.type}">
+                Tu navegador no soporta el elemento de video.
+              </video>
+              <div class="remove-preview" data-index="${index}">&times;</div>
+            `;
+          }
+          
+          previewList.appendChild(previewItem);
+          
+          // Agregar evento para eliminar vista previa
+          const removeBtn = previewItem.querySelector('.remove-preview');
+          removeBtn.addEventListener('click', () => removePreview(index));
+        };
+        
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Eliminar vista previa
+    function removePreview(index) {
+      filesToUpload.splice(index, 1);
+      handleFiles(filesToUpload);
+    }
+
+    // Subir archivos
+    function uploadFiles() {
+      if (filesToUpload.length === 0) {
+        alert('Por favor, selecciona al menos un archivo para subir.');
+        return;
+      }
+      
+      // En una aplicación real, aquí enviarías los archivos al servidor
+      // Por ahora, simulamos la subida
+      
+      filesToUpload.forEach(file => {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          const newItem = {
+            id: Date.now() + Math.random(),
+            type: file.type.startsWith('image/') ? 'image' : 'video',
+            url: e.target.result,
+            thumbnail: file.type.startsWith('image/') ? null : e.target.result
+          };
+          
+          galleryItems.unshift(newItem);
+        };
+        
+        reader.readAsDataURL(file);
+      });
+      
+      // Cerrar modal y actualizar galería
+      closeUploadModalFunc();
+      renderGallery();
+      
+      // Mostrar mensaje de éxito
+      alert(`Se han subido ${filesToUpload.length} archivos correctamente.`);
+      
+      // Limpiar
+      filesToUpload = [];
+      fileInput.value = '';
+    }
+
+    // Eliminar elemento
+    function deleteItem(id) {
+      if (confirm('¿Estás seguro de que quieres eliminar este elemento?')) {
+        galleryItems = galleryItems.filter(item => item.id !== id);
+        renderGallery();
+      }
+    }
+
+    // Abrir modal de visualización
+    function openViewModal(index, items) {
+      currentViewIndex = index;
+      const item = items[index];
+      
+      if (item.type === 'image') {
+        viewModalContent.innerHTML = `<img src="${item.url}" alt="Imagen ampliada">`;
+      } else {
+        viewModalContent.innerHTML = `
+          <video controls autoplay>
+            <source src="${item.url}" type="video/mp4">
+            Tu navegador no soporta el elemento de video.
+          </video>
+        `;
+      }
+      
+      viewModal.classList.add('active');
+    }
+
+    // Mostrar elemento anterior
+    function showPrevItem() {
+      const filteredItems = galleryItems.filter(item => {
+        if (currentFilter === 'all') return true;
+        return item.type === currentFilter;
+      });
+      
+      currentViewIndex = (currentViewIndex - 1 + filteredItems.length) % filteredItems.length;
+      openViewModal(currentViewIndex, filteredItems);
+    }
+
+    // Mostrar siguiente elemento
+    function showNextItem() {
+      const filteredItems = galleryItems.filter(item => {
+        if (currentFilter === 'all') return true;
+        return item.type === currentFilter;
+      });
+      
+      currentViewIndex = (currentViewIndex + 1) % filteredItems.length;
+      openViewModal(currentViewIndex, filteredItems);
+    }
+
+    // Cerrar modal de subida
+    function closeUploadModalFunc() {
+      uploadModal.classList.remove('active');
+      filesToUpload = [];
+      fileInput.value = '';
+      previewContainer.style.display = 'none';
+    }
+
+    // Cerrar modal de visualización
+    function closeViewModalFunc() {
+      viewModal.classList.remove('active');
+    }
+
+    // Inicializar cuando se carga la página
+    document.addEventListener('DOMContentLoaded', initGallery);
+  </script>
+</body>
+</html>
